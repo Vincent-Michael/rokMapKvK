@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Map Overlay</title>
 <style>
+  *,*::before,*::after{box-sizing:border-box}
   :root{
     --gold-dark:#FFC107; --gold-light:#D4AF37;
     --bg:#121212; --fg:#eaeaea; --panel:#1b1b1b; --panel-2:#222;
@@ -13,6 +14,17 @@
     --badge-bg:#1a1a1a; --badge-fg:#eaeaea; --badge-border:#333;
     --input-bg:#101010; --input-fg:#eaeaea; --input-border:#3a3a3a;
     --accent:#FFC107;
+    --col-kd:140px; --col-pow:160px; --col-kp:160px; --col-order:112px; --col-actions:112px;
+    --cm-col-idx:42px; --cm-col-name:1fr; --cm-col-color:140px; --cm-col-tint:120px;
+    --cm-col-stance:160px; --cm-col-actions:140px; --cm-col-info:180px;
+  }
+  body[data-theme="dark"]{
+    --bg:#0e1116; --fg:#f2f5fa; --panel:#0f141b; --panel-2:#141b24;
+    --border:#2b3340; --subtle:#1a2230;
+    --btn-bg:#1b2533; --btn-fg:#ffffff; --btn-border:#3a4a63;
+    --badge-bg:#141b24; --badge-fg:#e9eef7; --badge-border:#304157;
+    --input-bg:#0d131a; --input-fg:#edf2f9; --input-border:#3a4a63;
+    --accent:#ffbf2e;
   }
   body[data-theme="light"]{
     --bg:#f5f7fb; --fg:#0f172a; --panel:#ffffff; --panel-2:#f2f4f8;
@@ -26,16 +38,16 @@
     margin:0; font-family:system-ui,Inter,Segoe UI,Roboto,Arial,sans-serif;
     background:var(--bg); color:var(--fg);
     display:flex; flex-direction:column; align-items:center; gap:12px; padding:14px;
+    text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased;
   }
   .toolbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center}
   .btn,.badge,select,input[type="text"]{font-size:14px}
-  .btn{ padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border);
-        background:var(--btn-bg); color:var(--btn-fg); cursor:pointer;
-        transition:box-shadow .15s, transform .02s }
+  .btn{padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer; transition:box-shadow .15s, transform .02s}
   .btn:hover{box-shadow:0 0 0 3px color-mix(in oklab, var(--btn-border) 40%, transparent)}
   .btn:active{transform:translateY(1px)}
   .btn:focus-visible{outline:none; box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 60%, transparent)}
   .badge{padding:6px 10px; border-radius:999px; border:1px solid var(--badge-border); background:var(--badge-bg); color:var(--badge-fg)}
+  .badge:focus-within{box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 60%, transparent)}
   label input{display:none}
   .file{border:1px dashed var(--border); padding:8px 12px; border-radius:10px; cursor:pointer; background:var(--panel)}
   .row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center}
@@ -49,56 +61,55 @@
     border:1px solid var(--border); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.6); display:flex; flex-direction:column}
   .modal header{display:flex; align-items:center; gap:10px; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--subtle)}
   .modal h3{margin:0; font-size:18px}
-  .close{background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:6px 10px; cursor:pointer}
   .modal .content{padding:12px 16px; overflow:auto}
   .modal footer{display:flex; justify-content:space-between; gap:8px; padding:12px 16px; border-top:1px solid var(--subtle); background:color-mix(in oklab, var(--panel) 85%, black 15%)}
   .small{font-size:12px; opacity:.85}
+  .close{background:var(--btn-bg)!important; color:var(--btn-fg)!important; border:1px solid var(--btn-border)!important; padding:8px 12px!important; border-radius:10px!important; font-weight:600; cursor:pointer; transition:box-shadow .15s, transform .02s}
+  .close:hover{box-shadow:0 0 0 3px color-mix(in oklab, var(--btn-border) 40%, transparent)}
+  .close:active{transform:translateY(1px)}
+  .close:focus-visible{outline:none; box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 60%, transparent)}
 
-  /* Tables in modals */
-  .cm-table,.et-table{border:1px solid var(--border); border-radius:10px; overflow:hidden}
-  .cm-head,.cm-row{display:grid; grid-template-columns:42px 1fr 140px 120px 160px 140px 160px; align-items:center}
-  .cm-head{background:var(--panel-2); font-weight:600}
-  .cm-head>div{padding:10px 12px; border-right:1px solid var(--subtle)}
-  .cm-head>div:last-child{border-right:none}
-  .cm-body{max-height:min(56vh,620px); overflow:auto; background:var(--panel)}
-  .cm-row:nth-child(odd){background:color-mix(in oklab, var(--panel) 92%, white 8%)}
-  .cm-row:nth-child(even){background:color-mix(in oklab, var(--panel) 86%, white 14%)}
-  .cm-row>div{padding:8px 10px; border-top:1px solid var(--subtle); border-right:1px solid var(--subtle)}
-  .cm-row>div:last-child{border-right:none}
+  /* Manage Camps table */
+  .cm-table{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--panel)}
+  .cm-scroll{max-height:min(56vh,620px); overflow:auto; position:relative; scrollbar-gutter:stable}
+  .cm-head,.cm-row{display:grid; grid-template-columns: var(--cm-col-idx) var(--cm-col-name) var(--cm-col-color) var(--cm-col-tint) var(--cm-col-stance) var(--cm-col-actions) var(--cm-col-info); align-items:center}
+  .cm-head{position:sticky; top:0; z-index:1; background:var(--panel-2); font-weight:600; border-bottom:1px solid var(--subtle)}
+  .cm-head>div,.cm-row>div{padding:10px 12px; border-right:1px solid var(--subtle)}
+  .cm-head>div:last-child,.cm-row>div:last-child{border-right:none}
+  .cm-row{border-top:1px solid var(--subtle)}
+  body[data-theme="dark"] .cm-row:nth-child(odd){background:color-mix(in oklab, var(--panel) 88%, white 12%)}
+  body[data-theme="dark"] .cm-row:nth-child(even){background:color-mix(in oklab, var(--panel) 82%, white 18%)}
   .cm-input{width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--input-border); background:var(--input-bg); color:var(--input-fg)}
-  .cm-actions{display:flex; gap:6px; flex-wrap:wrap}
-  .cm-icon{padding:6px 8px; border-radius:8px; border:1px solid var(--btn-border); background:var(--btn-bg); cursor:pointer}
-  .swatch{width:20px; height:20px; border-radius:50%; border:1px solid var(--border); display:inline-block; margin-right:8px}
-  .inline{display:flex; align-items:center; gap:8px}
+  .cm-actions{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center}
+  .cm-icon{padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer; font-weight:600}
+  .cm-actions .cm-icon[data-act="del"]{background:#8a2b2b; border-color:#8a2b2b; color:#fff}
 
-  .et-head,.et-row{display:grid; grid-template-columns:140px 160px 160px 112px 112px; align-items:center}
-  .et-head{background:var(--panel-2); font-weight:600}
-  .et-body{max-height:min(56vh,620px); overflow:auto; background:var(--panel)}
-  .et-row:nth-child(odd){background:color-mix(in oklab, var(--panel) 92%, white 8%)}
-  .et-row:nth-child(even){background:color-mix(in oklab, var(--panel) 86%, white 14%)}
-  .et-row>div{padding:8px 10px; border-top:1px solid var(--subtle); border-right:1px solid var(--subtle)}
-  .et-row>div:last-child{border-right:none}
+  /* Edit Data table */
+  .et-table{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--panel)}
+  .et-body{max-height:min(56vh,620px); overflow:auto; position:relative; scrollbar-gutter:stable}
+  .et-head,.et-row{display:grid; grid-template-columns: var(--col-kd) var(--col-pow) var(--col-kp) var(--col-order) var(--col-actions); align-items:center}
+  .et-head{position:sticky; top:0; z-index:1; background:var(--panel-2); font-weight:600; border-bottom:1px solid var(--subtle)}
+  .et-head>div,.et-row>div{padding:8px 10px; border-right:1px solid var(--subtle)}
+  .et-head>div:last-child,.et-row>div:last-child{border-right:none}
+  .et-row{border-top:1px solid var(--subtle)}
+  body[data-theme="dark"] .et-row:nth-child(odd){background:color-mix(in oklab, var(--panel) 88%, white 12%)}
+  body[data-theme="dark"] .et-row:nth-child(even){background:color-mix(in oklab, var(--panel) 82%, white 18%)}
   .et-input{width:100%; padding:8px 10px; border:1px solid var(--input-border); border-radius:8px; background:var(--input-bg); color:var(--input-fg)}
   .et-input.invalid{border-color:#d32f2f; box-shadow:0 0 0 3px color-mix(in oklab, #d32f2f 25%, transparent)}
 
-  /* Copyright footer */
-  .copyright {
-    position: fixed;
-    right: 12px;
-    bottom: 10px;
-    padding: 6px 10px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: color-mix(in oklab, var(--panel) 85%, black 15%);
-    color: var(--fg);
-    font-size: 12px;
-    opacity: .85;
-    z-index: 60;
-    user-select: text;
+  /* Site copyright (webseite, nicht im Canvas) */
+  .site-copyright{
+    position:fixed; right:14px; bottom:12px;
+    padding:6px 10px; border-radius:10px;
+    border:1px solid var(--border);
+    background: color-mix(in oklab, var(--panel) 88%, black 12%);
+    color: var(--fg); font-size:12px; opacity:.9;
+    z-index:1000; user-select:text; -webkit-user-select:text;
+    backdrop-filter: blur(2px);
   }
-
-  /* HIDE DEBUG BUTTON */
-  #toggleDebug { display: none !important; }
+  body[data-theme="light"] .site-copyright{
+    background: color-mix(in oklab, var(--panel) 88%, white 12%);
+  }
 </style>
 </head>
 <body data-theme="dark">
@@ -113,7 +124,6 @@
     <span class="badge">Transparency: <input id="alpha" type="range" min="0.30" max="0.95" step="0.01" value="0.70"></span>
     <span class="badge">Panel Size: <input id="psize" type="range" min="0.60" max="1.60" step="0.01" value="0.60"></span>
     <span class="badge">Map Scale: <input id="mapScale" type="range" min="0.80" max="1.40" step="0.01" value="1.00"></span>
-
     <span class="badge">Map Preset:
       <select id="preset">
         <option value="custom">Custom (keep current)</option>
@@ -125,9 +135,9 @@
         <option value="invictus6">Alliance Invictus (6)</option>
         <option value="britain4">King of all Britain (4)</option>
         <option value="keener6">Keener Blades (6)</option>
+        <option value="song4">Song of Troy (4)</option>
       </select>
     </span>
-
     <span class="badge">Title: <input id="titleText" type="text" value="Heroic Anthem" style="width:220px"></span>
     <span class="sep"></span>
     <button id="openCampMgr" class="btn">Manage Camps</button>
@@ -135,17 +145,18 @@
     <button id="toggleSummary" class="btn">Summary: ON</button>
     <button id="resetAllPos" class="btn">Reset Positions</button>
     <span class="sep"></span>
-    <button id="toggleDrag" class="btn">Drag: ON</button>
-    <button id="toggleDebug" class="btn">Debug: OFF</button>
+    <button id="toggleDrag" class="btn">Drag: OFF</button>
     <button id="downloadPng" class="btn">Download PNG</button>
-    <span class="badge">Canvas: 1600×900</span>
   </div>
 
-  <div class="hint">Choose a preset to auto-load the map.</div>
+  <div class="hint">Choose a preset to auto-load the map. Drag panels to reposition; “Reset Positions” applies preset defaults.</div>
   <canvas id="cv" width="1600" height="900"></canvas>
 
-  <!-- Camp Manager -->
-  <div id="campMgrWrap" class="modal-backdrop">
+  <!-- Webseiten-Copyright (nicht im Canvas/Export) -->
+  <div class="site-copyright">© <span id="cpYear"></span> — Vinc69cmAløT#2359</div>
+
+  <!-- Manage Camps -->
+  <div id="campMgrWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal">
       <header>
         <h3>Manage Camps</h3>
@@ -156,10 +167,13 @@
       </header>
       <div class="content">
         <div class="cm-table">
-          <div class="cm-head">
-            <div>#</div><div>Name</div><div>Color</div><div>Total Tint</div><div>Status</div><div>Actions</div><div>Info</div>
+          <div class="cm-scroll" id="cmScroll">
+            <div class="cm-head">
+              <div>#</div><div>Name</div><div>Color</div><div>Total Tint</div>
+              <div>Status</div><div>Actions</div><div>Info</div>
+            </div>
+            <div id="cmBody"></div>
           </div>
-          <div class="cm-body" id="cmBody"></div>
         </div>
       </div>
       <footer>
@@ -170,7 +184,7 @@
   </div>
 
   <!-- Edit Data -->
-  <div id="editorWrap" class="modal-backdrop">
+  <div id="editorWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal">
       <header>
         <h3>Edit Data (KD / Power / KP)</h3>
@@ -192,8 +206,12 @@
           <span class="small">Power/KP: e.g. <code>23,8B</code> or <code>950M</code></span>
         </div>
         <div class="et-table" style="margin-top:10px">
-          <div class="et-head"><div>KD</div><div>Power</div><div>KP</div><div>Order</div><div>Actions</div></div>
-          <div class="et-body" id="rowsBody"></div>
+          <div class="et-body" id="rowsWrap">
+            <div class="et-head">
+              <div>KD</div><div>Power</div><div>KP</div><div>Order</div><div>Actions</div>
+            </div>
+            <div id="rowsBody"></div>
+          </div>
         </div>
       </div>
       <footer>
@@ -206,16 +224,10 @@
     </div>
   </div>
 
-  <!-- Copyright footer (UI) -->
-  <div class="copyright">
-    © <span id="cpYear"></span> — Vinc69cmAløT#2359
-  </div>
-
 <script>
-/* ====== Constants & DOM ====== */
-const DATA_KEY="siege_overlay_data_v13";
+/* ====== DOM + STATE ====== */
+const DATA_KEY="siege_overlay_state_v17";
 const PWIDTH0=0.28, PHEIGHT0=0.18;
-
 const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
 const fileInput=document.getElementById("fileInput");
 const modeSel=document.getElementById("mode");
@@ -226,20 +238,15 @@ const titleInput=document.getElementById("titleText");
 const presetSel=document.getElementById("preset");
 const dlBtn=document.getElementById("downloadPng");
 const toggleDragBtn=document.getElementById("toggleDrag");
-const toggleDebugBtn=document.getElementById("toggleDebug");
 const resetAllPosBtn=document.getElementById("resetAllPos");
 const toggleSummaryBtn=document.getElementById("toggleSummary");
 
 const campMgrWrap=document.getElementById("campMgrWrap");
-const openCampMgr=document.getElementById("openCampMgr");
-const closeCampMgr=document.getElementById("closeCampMgr");
 const cmBody=document.getElementById("cmBody");
 const addCampBtn=document.getElementById("addCamp");
 const saveCampMgrBtn=document.getElementById("saveCampMgr");
 
 const editorWrap=document.getElementById("editorWrap");
-const openDataBtn=document.getElementById("openData");
-const closeEditor=document.getElementById("closeEditor");
 const campSelect=document.getElementById("campSelect");
 const rowsBody=document.getElementById("rowsBody");
 const addRowBtn=document.getElementById("addRow");
@@ -251,56 +258,87 @@ const loadDataBtn=document.getElementById("loadData");
 const exportDataBtn=document.getElementById("exportData");
 const importDataBtn=document.getElementById("importData");
 
-/* Copyright year */
-const cpYearEl = document.getElementById("cpYear");
-if (cpYearEl) cpYearEl.textContent = new Date().getFullYear();
-
-/* ====== State ====== */
-let mapImg=null, mode="dark", dragOn=true, debug=false;
+let mapImg=null, mode="dark", dragOn=false;
 let camps=[], pos={};
 let summaryGroupPos=[0.50,0.50], lastSummaryGroupLayout=null, showSummary=true;
 let dragging=null, draggingSummary=false, lastLayout=null, lastCampRects={};
 let currentEditorCampIndex=0;
+let summaryDragLay=null;
 
 /* ====== Utils ====== */
-function uid(){return'c_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4)}
-function clamp(a,l,h){return Math.max(l,Math.min(h,a))}
-function hexToRgb(hex){let m=String(hex||'').replace('#',''); if(m.length===3)m=m.split('').map(c=>c+c).join(''); const n=parseInt(m||'000000',16); return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
-function mix(hex,other='#000',t=0.75){const a=hexToRgb(hex),b=hexToRgb(other);const r=Math.round(a.r*(1-t)+b.r*t),g=Math.round(a.g*(1-t)+b.g*t),bl=Math.round(a.b*(1-t)+b.b*t);return'#'+[r,g,bl].map(v=>('0'+v.toString(16)).slice(-2)).join('')}
-function hexWithAlpha(hex,a){const{r,g,b}=hexToRgb(hex);return`rgba(${r},${g},${b},${a})`}
-function setFont(px,w){ctx.font=(w?w+" ":"")+px+"px Inter, Segoe UI, Arial, sans-serif"}
+const uid=()=> 'c_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
+const clamp=(a,l,h)=> Math.max(l,Math.min(h,a));
+const hexToRgb=hex=>{let m=String(hex||'').replace('#',''); if(m.length===3)m=m.split('').map(c=>c+c).join(''); const n=parseInt(m||'000000',16); return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}};
+const mix=(hex,other='#000',t=0.75)=>{const a=hexToRgb(hex),b=hexToRgb(other);const r=Math.round(a.r*(1-t)+b.r*t),g=Math.round(a.g*(1-t)+b.g*t),bl=Math.round(a.b*(1-t)+b.b*t);return'#'+[r,g,bl].map(v=>('0'+v.toString(16)).slice(-2)).join('')};
+const hexWithAlpha=(hex,a)=>{const{r,g,b}=hexToRgb(hex);return`rgba(${r},${g},${b},${a})`};
+const setFont=(px,w)=>{ctx.font=(w?w+" ":"")+px+"px Inter, Segoe UI, Arial, sans-serif"};
 function drawTextFit(text,cx,cy,maxW,px,weight,color){let s=px;setFont(s,weight);let m=ctx.measureText(text);while(m.width>maxW&&s>9){s-=1;setFont(s,weight);m=ctx.measureText(text)}ctx.fillStyle=color;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,cx,cy)}
 function normalizePowerStr(s){if(!s)return"";s=String(s).trim().replace(/\s+/g,"");if(/[0-9]\.[0-9]/.test(s)&&!/,[0-9]/.test(s))s=s.replace('.',',');if(/[bB]$/.test(s))s=s.replace(/[bB]$/,'B');else if(/[mM]$/.test(s))s=s.replace(/[mM]$/,'M');const u=/[BM]$/.test(s)?s.slice(-1):'';let core=u?s.slice(0,-1):s;if(core.includes(",")&&core.includes("."))core=core.replace(/\./g,"");return core+u}
-function validKD(s){return/^\d{1,6}$/.test(String(s).trim())}
+const validKD=s=>/^\d{1,6}$/.test(String(s).trim());
 function validBM(s){s=normalizePowerStr(s);if(!s)return false;const m=s.match(/^(\d+(?:[.,]\d+)?)\s*([BM])$/);if(!m)return false;const num=parseFloat(m[1].replace(',','.'));return!isNaN(num)&&num>=0}
 function parseToBillions(str){let s=String(str||'').trim();if(!s)return NaN;s=s.replace(/\s+/g,'');let u='B';if(/[bB]$/.test(s)){u='B';s=s.slice(0,-1)}else if(/[mM]$/.test(s)){u='M';s=s.slice(0,-1)}if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'');s=s.replace(',', '.');const v=parseFloat(s);if(isNaN(v))return NaN;return u==='M'?v/1000:v}
-function fmtB(v){return(v.toFixed(1)).replace('.',',')+'B'}
+const fmtB=v=> (v.toFixed(1)).replace('.',',')+'B';
 function withTotals(rows){let p=0,k=0;(rows||[]).forEach(r=>{const pv=parseToBillions(r[1]);if(!isNaN(pv))p+=pv;const kv=parseToBillions(r[2]);if(!isNaN(kv))k+=kv});return[...(rows||[]),["Total",fmtB(p),fmtB(k)]]}
-function getPresetTitle(){const opt=presetSel.options[presetSel.selectedIndex];return(opt?.text||"").replace(/\s*\(\d+\)\s*$/,'').trim()}
-function getTotalTint(c){return mode==="light"?(c.totalTintLight||mix(c.color,"#fff",0.85)):(c.totalTint||mix(c.color,"#000",0.75))}
-function getStanceStroke(c){const neutral=(mode==="dark")?"#CFCFCF":"#555";if(c.stance==="ally")return{color:"#4CAF50",width:10};if(c.stance==="enemy")return{color:"#E53935",width:10};return{color:neutral,width:7}}
-function fmt2(n){ return (Math.round(n*100)/100).toFixed(2); } /* for debug labels */
+const getPresetTitle=()=>{const opt=presetSel.options[presetSel.selectedIndex];return(opt?.text||"").replace(/\s*\(\d+\)\s*$/,'').trim()};
+const getTotalTint=c=> mode==="light"?(c.totalTintLight||mix(c.color,"#fff",0.85)):(c.totalTint||mix(c.color,"#000",0.75));
 
-/* ====== Auto map images per preset ====== */
-const presetImages = {
-  heroic4:    "ha.png",
-  warriors6:  "wu.png",
-  tide4:      "tides.png",
-  storm6:     "stratagems.png",
-  invictus6:  "ai.png",
-  britain4:   "kob.png",
-  keener6:    "kb.png",
-  orleans6:   "orleans.png",
-};
-function loadMapForPreset(key){
-  const src = presetImages[key];
-  if(!src) return;
-  const img = new Image();
-  img.onload = () => { mapImg = img; draw(); };
-  img.src = src;
+// Map key/label
+const getCurrentMapKey   = () => (presetSel?.value || "custom");
+const getCurrentMapLabel = () => { const t=getPresetTitle(); return t && t.length ? t : "Custom"; };
+
+/* ====== State Serialize / Deserialize ====== */
+function sanitizeCamps(arr){
+  return (arr||[]).map(c=>{
+    const id=c.id||uid();
+    return { id, name:c.name||"Camp", color:c.color||"#999999",
+      totalTint:c.totalTint||mix(c.color||"#999","#000",0.75),
+      stance:c.stance||"neutral",
+      rows:Array.isArray(c.rows)?c.rows.map(r=>[r[0]||"",r[1]||"",r[2]||""]):[["","",""]] };
+  });
+}
+function serializeState(){
+  const outPos={};
+  camps.forEach(c=>{const p=pos[c.id]; if(Array.isArray(p)&&p.length===2) outPos[c.id]=[clamp(p[0],0,1),clamp(p[1],0,1)];});
+  return {
+    mapKey:   getCurrentMapKey(),
+    mapLabel: getCurrentMapLabel(),
+    title:    titleInput.value || "",
+    camps:    sanitizeCamps(camps),
+    pos:      outPos
+  };
+}
+function applyState(state){
+  let importedCamps, importedPos={};
+  if(Array.isArray(state)){importedCamps=state}
+  else if(state && Array.isArray(state.camps)){importedCamps=state.camps; if(state.pos&&typeof state.pos==="object") importedPos=state.pos}
+  else{throw new Error("Invalid data format")}
+  const cleaned=sanitizeCamps(importedCamps);
+  const newPos={}, currentNameToPos={};
+  camps.forEach(c=>{if(pos[c.id]) currentNameToPos[c.name.toLowerCase()]=pos[c.id]});
+  cleaned.forEach(c=>{
+    if(importedPos[c.id]){newPos[c.id]=importedPos[c.id]; return;}
+    const byName=cleaned.find(x=>(x.name||"").toLowerCase()===(c.name||"").toLowerCase());
+    if(byName && byName.id && importedPos[byName.id]){newPos[c.id]=importedPos[byName.id]; return;}
+    if(currentNameToPos[c.name.toLowerCase()]){newPos[c.id]=currentNameToPos[c.name.toLowerCase()]; return;}
+    newPos[c.id]=[0.5,0.5];
+  });
+  camps=cleaned; pos=newPos;
 }
 
-/* ====== Presets (mit aktuellen Positionen) ====== */
+/* ====== Stances (solid) ====== */
+function getStanceStroke(c){
+  const neutral=(mode==="dark")?"#B0BEC5":"#455A64";
+  if(c.stance==="ally")  return {color:"#43A047", width:7, glow:12, pattern:[]};
+  if(c.stance==="enemy") return {color:"#E53935", width:7, glow:12, pattern:[]};
+  return {color:neutral,   width:7, glow:12, pattern:[]};
+}
+
+/* ====== Preset images & positions ====== */
+const presetImages={
+  heroic4:"ha.png",warriors6:"wu.png",tide4:"tides.png",storm6:"stratagems.png",
+  invictus6:"ai.png",britain4:"kob.png",keener6:"kb.png",orleans6:"orleans.png",song4:"troy.png"
+};
+function loadMapForPreset(key){const src=presetImages[key]; if(!src) return; const img=new Image(); img.onload=()=>{mapImg=img;draw()}; img.src=src}
 const mapPresets={
   orleans6:{camps:[
     {name:"Brittany",color:"#BDBDBD",pos:[0.18,0.12]},
@@ -360,172 +398,218 @@ const mapPresets={
     {name:"Greenwood",color:"#22C55E",pos:[0.33,0.82]},
     {name:"Water",color:"#3B82F6",pos:[0.59,0.86]},
   ]},
+  song4:{camps:[
+    {name:"Aeolia",color:"#3B82F6",pos:[0.24,0.34]},
+    {name:"Dardania",color:"#EF4444",pos:[0.81,0.14]},
+    {name:"Mycenae",color:"#F59E3B",pos:[0.26,0.78]},
+    {name:"Lycia",color:"#FFCA28",pos:[0.83,0.78]},
+  ]},
 };
 
-/* ====== Models & Preset apply ====== */
+/* ====== Camp factory & Preset ====== */
 function makeCamp(name,color,rows=[["","",""]],stance="neutral",totalTint=null){
   return{id:uid(),name,color,totalTint:totalTint||mix(color,"#000",0.75),stance,rows}
 }
 function applyPreset(key,keep=false){
   const p=mapPresets[key]; if(!p) return;
-  const nameToRows={}; if(keep) camps.forEach(c=> nameToRows[c.name]=(c.rows||[]).map(r=>[...r]));
+  const nameToRows={}, nameToStance={}, nameToTint={};
+  if(keep){camps.forEach(c=>{nameToRows[c.name]=(c.rows||[]).map(r=>[...r]); nameToStance[c.name]=c.stance; nameToTint[c.name]=c.totalTint||null;});}
   pos={};
   camps=p.camps.map(c=>{
-    const camp=makeCamp(c.name,c.color,nameToRows[c.name]||[["","",""]]);
+    const camp=makeCamp(c.name,c.color,nameToRows[c.name]||[["","",""]],nameToStance[c.name]||"neutral",nameToTint[c.name]||null);
     pos[camp.id]=c.pos; return camp;
   });
-  summaryGroupPos=[0.50,0.50]; draw();
+  summaryGroupPos=[0.50,0.50];
+  draw();
 }
 
-/* ====== UI bindings ====== */
+/* ====== UI Bindings ====== */
 modeSel.onchange=()=>{mode=modeSel.value;document.body.dataset.theme=mode;draw()};
 document.body.dataset.theme=mode;
 
-fileInput.addEventListener('change',()=>{
-  const f=fileInput.files[0]; if(!f) return;
-  const img=new Image(); img.onload=()=>{mapImg=img;draw()}; img.src=URL.createObjectURL(f);
-});
+fileInput.onchange=()=>{const f=fileInput.files[0]; if(!f) return; const img=new Image(); img.onload=()=>{mapImg=img;draw()}; img.src=URL.createObjectURL(f)};
 [alphaInput,panelSizeInput,mapScaleInput,titleInput].forEach(el=> el.oninput=()=>draw());
-
-toggleDragBtn.onclick=()=>{dragOn=!dragOn;toggleDragBtn.textContent=`Drag: ${dragOn?"ON":"OFF"}`;toggleDragBtn.style.opacity=dragOn?"1":"0.7"};
-// Debug-Button ist ausgeblendet; Handler bleibt optional ungenutzt
-if (toggleDebugBtn) toggleDebugBtn.onclick=()=>{};
 toggleSummaryBtn.onclick=()=>{showSummary=!showSummary;toggleSummaryBtn.textContent=`Summary: ${showSummary?"ON":"OFF"}`;draw()};
 resetAllPosBtn.onclick=()=>{const v=presetSel.value; if(v!=="custom"&&mapPresets[v]){titleInput.value=getPresetTitle();applyPreset(v,true);loadMapForPreset(v);}else{draw()}};
 dlBtn.onclick=()=>{const a=document.createElement("a");a.download=`MapOverlay_${mode}.png`;a.href=cv.toDataURL("image/png");a.click()};
 presetSel.onchange=()=>{const v=presetSel.value;if(v==="custom")return;titleInput.value=getPresetTitle();applyPreset(v,false);loadMapForPreset(v)};
+function syncDragBtn(){toggleDragBtn.textContent=`Drag: ${dragOn?"ON":"OFF"}`;toggleDragBtn.style.opacity=dragOn?"1":"0.7"}
+syncDragBtn(); toggleDragBtn.onclick=()=>{dragOn=!dragOn;syncDragBtn()}
+
+/* ====== Manage Camps (robust) ====== */
+function showCampMgr(){
+  try{
+    if(!Array.isArray(camps)||camps.length===0){
+      const v=presetSel?.value||"heroic4";
+      applyPreset(mapPresets[v]?v:"heroic4",false);
+      loadMapForPreset(mapPresets[v]?v:"heroic4");
+    }
+    renderCampMgr();
+    campMgrWrap.style.display="flex";
+    campMgrWrap.setAttribute("aria-hidden","false");
+  }catch(e){console.error(e)}
+}
+function hideCampMgr(){campMgrWrap.style.display="none";campMgrWrap.setAttribute("aria-hidden","true")}
+document.addEventListener("click",(ev)=>{
+  const openBtn=ev.target.closest("#openCampMgr");
+  const closeBtn=ev.target.closest("#closeCampMgr");
+  if(openBtn){ev.preventDefault();showCampMgr()}
+  if(closeBtn){ev.preventDefault();hideCampMgr()}
+});
+document.addEventListener("keydown",(ev)=>{
+  if(ev.key==="Escape" && getComputedStyle(campMgrWrap).display!=="none"){hideCampMgr()}
+});
 
 /* ====== Dragging ====== */
 cv.addEventListener("mousedown",ev=>{
   if(!dragOn||!lastLayout)return;
-  const r=cv.getBoundingClientRect(),mx=(ev.clientX-r.left)*(cv.width/r.width),my=(ev.clientY-r.top)*(cv.height/r.height);
-  for(const id in lastCampRects){const {L,T,W,H}=lastCampRects[id];
-    if(mx>=L&&mx<=L+W&&my>=T&&my<=T+H){const cx=L+W/2,cy=T+H/2;dragging={id,dx:mx-cx,dy:my-cy};return}
+  ev.preventDefault();
+  const r=cv.getBoundingClientRect(), mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
+  if(showSummary&&lastSummaryGroupLayout){
+    const {x,y,w,h}=lastSummaryGroupLayout;
+    if(mx>=x&&mx<=x+w&&my>=y&&my<=y+h){
+      const cx=x+w/2, cy=y+h/2;
+      draggingSummary={dx:mx-cx, dy:my-cy};
+      summaryDragLay={w,h};
+      return;
+    }
   }
-  if(showSummary&&lastSummaryGroupLayout){const {x,y,w,h}=lastSummaryGroupLayout;
-    if(mx>=x&&mx<=x+w&&my>=y&&my<=y+h){draggingSummary={dx:mx-(x+w/2),dy:my-(y/2+h/2)};return}}
+  for(const id in lastCampRects){
+    const {L,T,W,H}=lastCampRects[id];
+    if(mx>=L&&mx<=L+W&&my>=T&&my<=T+H){
+      const cx=L+W/2, cy=T+H/2;
+      dragging={id,dx:mx-cx,dy:my-cy};
+      return;
+    }
+  }
 });
-cv.addEventListener("mousemove",ev=>{
+cv.addEventListener("mousemove",(ev)=>{
   if((!dragging&&!draggingSummary)||!lastLayout)return;
-  const r=cv.getBoundingClientRect(),mx=(ev.clientX-r.left)*(cv.width/r.width),my=(ev.clientY-r.top)*(cv.height/r.height);
+  const r=cv.getBoundingClientRect(), mx=(ev.clientX-r.left)*(cv.width/r.width), my=(ev.clientY-r.top)*(cv.height/r.height);
   const {x,y,w,h}=lastLayout;
+
   if(dragging){
-    const rect=lastCampRects[dragging.id],s=parseFloat(panelSizeInput.value||"0.60");
-    const W=rect?rect.W:w*PWIDTH0*s,H=rect?rect.H:h*PHEIGHT0*s;
-    let cx=mx-dragging.dx,cy=my-dragging.dy; cx=clamp(cx,x+W/2,x+w-W/2); cy=clamp(cy,y+H/2,y+h-H/2);
+    const rect=lastCampRects[dragging.id], s=parseFloat(panelSizeInput.value||"0.60");
+    const W=rect?rect.W:w*PWIDTH0*s, H=rect?rect.H:h*PHEIGHT0*s;
+    let cx=mx-dragging.dx, cy=my-dragging.dy;
+    cx=clamp(cx, x+W/2, x+w-W/2); cy=clamp(cy, y+H/2, y+h-H/2);
     pos[dragging.id]=[(cx-x)/w,(cy-y)/h]; draw();
-  }else{
-    const lay=lastSummaryGroupLayout||{w:w*0.6,h:h*0.22};
-    let cx=mx-draggingSummary.dx,cy=my-dragging.dy; cx=clamp(cx,x+lay.w/2,x+w-lay.w/2); cy=clamp(cy,y+lay.h/2,y+h-lay.h/2);
+  }else if(draggingSummary){
+    const lay=summaryDragLay||lastSummaryGroupLayout||{w:w*0.6,h:h*0.22};
+    let cx=mx-draggingSummary.dx, cy=my-draggingSummary.dy;
+    cx=clamp(cx, x+lay.w/2, x+w-lay.w/2); cy=clamp(cy, y+lay.h/2, y+h-lay.h/2);
     summaryGroupPos=[(cx-x)/w,(cy-y)/h]; draw();
   }
 });
-cv.addEventListener("mouseup",()=>{dragging=null;draggingSummary=false});
-cv.addEventListener("mouseleave",()=>{dragging=null;draggingSummary=false});
+cv.addEventListener("mouseup",   ()=>{dragging=null; draggingSummary=false; summaryDragLay=null});
+cv.addEventListener("mouseleave",()=>{dragging=null; draggingSummary=false; summaryDragLay=null});
 
 /* ====== Drawing ====== */
-function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+const roundRect=(x,y,w,h,r)=>{ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()};
 function computePanelSizeForRows(baseW,baseH,rowsCount){const pad=8,MIN=24;const N=rowsCount+1;const minH=2*pad+N*MIN;return{W:baseW,H:Math.max(baseH,minH),N,pad}}
+
 function drawTable(x,y,w,h,c){
-  const rows=withTotals(c.rows),nBody=rows.length,nCols=3,pad=8,N=nBody+1;
-  const cellW=(w-2*pad)/nCols,cellH=(h-2*pad)/N;
+  const rows=withTotals(c.rows), nBody=rows.length, nCols=3, pad=8, N=nBody+1;
+  const cellW=(w-2*pad)/nCols, cellH=(h-2*pad)/N;
   const S=clamp(Math.min(cellH/24,(cellW/160)),0.65,1.6);
   const SIZE={name:clamp(Math.round(18*S),12,26),header:clamp(Math.round(14*S),11,22),body:clamp(Math.round(13*S),10,20),total:clamp(Math.round(13*S),10,20)};
-  const bannerH=clamp(Math.round(28*S),20,40),bannerW=clamp(w*(0.66+0.02*Math.max(0,rows.length-3)),w*0.58,w*0.86);
-  const a=clamp(parseFloat(alphaInput.value||"0.70"),0.10,0.95);
+  const bannerH=clamp(Math.round(28*S),20,40), bannerW=clamp(w*(0.66+0.02*Math.max(0,rows.length-3)),w*0.58,w*0.86);
+
+  let a=clamp(parseFloat(alphaInput.value||"0.70"),0.10,0.95); if(mode==="dark") a=Math.max(a,0.58);
+
+  // panel fill
   const panelFill=(mode==="dark")?`rgba(0,0,0,${a})`:`rgba(255,255,255,${a})`;
   ctx.fillStyle=panelFill; roundRect(x,y,w,h,10); ctx.fill();
-  const {color:strokeCol,width:strokeW}=getStanceStroke(c);
-  ctx.lineJoin="round"; ctx.lineCap="round";
-  ctx.lineWidth=strokeW+12; ctx.strokeStyle=hexWithAlpha(strokeCol,(mode==="light")?0.28:0.40); roundRect(x,y,w,h,10); ctx.stroke();
-  ctx.lineWidth=strokeW; ctx.strokeStyle=strokeCol; roundRect(x,y,w,h,10); ctx.stroke();
-  ctx.lineWidth=3; ctx.strokeStyle="#000"; roundRect(x,y,w,h,10); ctx.stroke();
-  const bW=bannerW,bH=bannerH,bX=x+(w-bW)/2,bY=y-bH-6;
-  const bAlpha=clamp(Math.max(0.75,a+0.25),0.75,0.98);
-  ctx.fillStyle=hexWithAlpha(c.color,bAlpha); roundRect(bX,bY,bW,bH,10); ctx.fill(); ctx.strokeStyle=(mode==="dark")?"#000":"#333"; ctx.lineWidth=1; ctx.stroke();
-  setFont(SIZE.name,"600"); ctx.strokeStyle="rgba(0,0,0,.75)"; ctx.lineWidth=3; ctx.textAlign="center"; ctx.textBaseline="middle";
-  ctx.strokeText(c.name,bX+bW/2,bY+bH/2+0.5); ctx.fillStyle="#fff"; ctx.fillText(c.name,bX+bW/2,bY+bH/2+0.5);
+
+  // frame (solid stance)
+  const ss=getStanceStroke(c);
+  ctx.lineJoin="round"; ctx.lineCap="round"; ctx.miterLimit=2.5;
+  ctx.setLineDash([]);
+  ctx.lineWidth=Math.max(4, ss.width+5);
+  ctx.strokeStyle=hexWithAlpha(ss.color,(mode==="light")?0.20:0.28);
+  roundRect(Math.round(x)+0.5,Math.round(y)+0.5,Math.round(w)-1,Math.round(h)-1,10); ctx.stroke();
+
+  ctx.lineWidth=ss.width;
+  ctx.strokeStyle=ss.color;
+  roundRect(Math.round(x)+0.5,Math.round(y)+0.5,Math.round(w)-1,Math.round(h)-1,10); ctx.stroke();
+
+  ctx.lineWidth=2.25;
+  ctx.strokeStyle="rgba(0,0,0,0.55)";
+  roundRect(Math.round(x)+1,Math.round(y)+1,Math.round(w)-2,Math.round(h)-2,9); ctx.stroke();
+
+  ctx.lineWidth=0.9;
+  ctx.strokeStyle="rgba(0,0,0,0.35)";
+  roundRect(Math.round(x)+0.5,Math.round(y)+0.5,Math.round(w)-1,Math.round(h)-1,10); ctx.stroke();
+
+  // banner
+  const bW=bannerW, bH=bannerH, bX=x+(w-bW)/2, bY=y-bH-6;
+  const bAlpha=clamp(Math.max(0.75,a+0.25),0.75,0.96);
+  ctx.fillStyle=hexWithAlpha(c.color,bAlpha); roundRect(bX,bY,bW,bH,10); ctx.fill();
+  ctx.strokeStyle="rgba(0,0,0,0.65)"; ctx.lineWidth=1; ctx.stroke();
+
+  // banner text
+  setFont(SIZE.name,"600");
+  if(mode==="dark"){ctx.save();ctx.shadowColor="rgba(0,0,0,0.55)";ctx.shadowBlur=4;ctx.shadowOffsetY=1}
+  ctx.strokeStyle="rgba(0,0,0,.75)"; ctx.lineWidth=3; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.strokeText(c.name,bX+bW/2,bY+bH/2+0.5);
+  ctx.fillStyle="#fff"; ctx.fillText(c.name,bX+bW/2,bY+bH/2+0.5);
+  if(mode==="dark") ctx.restore();
+
+  // header
   const headers=(c.headers&&c.headers.length===3)?c.headers:["KD","Power","KP"];
-  const headerAlpha=clamp(a+0.15,0.55,0.95);
-  ctx.fillStyle=hexWithAlpha(c.color,headerAlpha); ctx.fillRect(x+pad,y+pad,cellW*nCols,cellH);
+  const headerAlpha=mode==="dark"?clamp(a+0.20,0.62,0.96):clamp(a+0.10,0.52,0.94);
+  ctx.fillStyle=hexWithAlpha(c.color,headerAlpha);
+  ctx.fillRect(x+pad,y+pad,cellW*nCols,cellH);
   headers.forEach((t,ci)=>drawTextFit(t,x+pad+ci*cellW+cellW/2,y+pad+cellH/2+0.5,cellW-8,SIZE.header,"bold","#fff"));
+
+  // body + total
   const bodyFill=(mode==="dark")?`rgba(30,30,30,${a})`:`rgba(250,250,250,${a})`;
   const totalFill=hexWithAlpha(getTotalTint(c),Math.max(0.45,a));
   for(let r=0;r<nBody;r++){
-    const yy=y+pad+(r+1)*cellH,isTotal=rows[r][0]==="Total";
+    const yy=y+pad+(r+1)*cellH, isTotal=rows[r][0]==="Total";
     ctx.fillStyle=isTotal?totalFill:bodyFill; ctx.fillRect(x+pad,yy,cellW*nCols,cellH);
-    for(let cc=0;cc<nCols;cc++){const col=(mode==="dark")?"#EAEAEA":"#222"; const sz=isTotal?SIZE.total:SIZE.body;
-      drawTextFit(rows[r][cc],x+pad+cc*cellW+cellW/2,yy+cellH/2+0.5,cellW-8,sz,isTotal?"bold":"",col);}
+    for(let cc=0;cc<nCols;cc++){
+      const col=(mode==="dark")?"#EAEAEA":"#222", sz=isTotal?SIZE.total:SIZE.body;
+      drawTextFit(rows[r][cc],x+pad+cc*cellW+cellW/2,yy+cellH/2+0.5,cellW-8,sz,isTotal?"bold":"",col);
+    }
   }
-  const gridAlpha=clamp(a*0.9,0.20,0.60); ctx.strokeStyle=(mode==="dark")?`rgba(255,255,255,${gridAlpha})`:`rgba(0,0,0,${gridAlpha})`;
-  ctx.lineWidth=clamp(1*S,0.8,1.6);
+
+  // grid
+  const gridAlpha=mode==="dark"?clamp(a*0.70,0.18,0.40):clamp(a*0.60,0.12,0.30);
+  ctx.strokeStyle=(mode==="dark")?`rgba(255,255,255,${gridAlpha})`:`rgba(0,0,0,${gridAlpha})`;
+  ctx.lineWidth=0.75;
   for(let r=0;r<=N;r++){const yy=y+pad+r*cellH; ctx.beginPath(); ctx.moveTo(x+pad,yy); ctx.lineTo(x+pad+nCols*cellW,yy); ctx.stroke()}
   for(let ccc=0;ccc<=nCols;ccc++){const xx=x+pad+ccc*cellW; ctx.beginPath(); ctx.moveTo(xx,y+pad); ctx.lineTo(xx,y+pad+N*cellH); ctx.stroke()}
 }
+
 function campSum(c){let p=0,k=0;(c.rows||[]).forEach(r=>{const pv=parseToBillions(r[1]);if(!isNaN(pv))p+=pv;const kv=parseToBillions(r[2]);if(!isNaN(kv))k+=kv});return{p,k}}
-function buildSummaryRows(list){return list.map(c=>{const s=campSum(c);return[c.name,fmtB(s.p),fmtB(s.k)]})}
+const buildSummaryRows=list=> list.map(c=>{const s=campSum(c);return[c.name,fmtB(s.p),fmtB(s.k)]});
 function drawSummaryGroup(area,baseW,baseH){
   if(!showSummary){lastSummaryGroupLayout=null;return}
-  const allies=camps.filter(c=>c.stance==="ally"),enemies=camps.filter(c=>c.stance==="enemy");
+  const allies=camps.filter(c=>c.stance==="ally"), enemies=camps.filter(c=>c.stance==="enemy");
   const ally={id:"ally",name:"Allies",color:"#4CAF50",totalTint:(mode==="dark")?"rgba(255,255,255,.06)":"rgba(0,0,0,.05)",stance:"ally",headers:["Camp","Power","KP"],rows:buildSummaryRows(allies)};
   const enemy={id:"enemy",name:"Enemies",color:"#E53935",totalTint:(mode==="dark")?"rgba(255,255,255,.06)":"rgba(0,0,0,.05)",stance:"enemy",headers:["Camp","Power","KP"],rows:buildSummaryRows(enemies)};
-  const needA=computePanelSizeForRows(baseW,baseH,ally.rows.length+1),needE=computePanelSizeForRows(baseW,baseH,enemy.rows.length+1);
-  const H=Math.max(needA.H,needE.H),W=baseW,gap=18;
-  let [fx,fy]=summaryGroupPos; let cx=area.x+fx*area.w,cy=area.y+fy*area.h;
-  const totalW=W*2+gap,totalH=H; cx=clamp(cx,area.x+totalW/2,area.x+area.w-totalW/2); cy=clamp(cy,area.y+totalH/2,area.y+area.h-totalH/2);
-  const leftX=Math.round(cx-totalW/2),topY=Math.round(cy-totalH/2);
-  drawTable(leftX,topY,W,H,ally); drawTable(leftX+W+gap,topY,W,H,enemy); lastSummaryGroupLayout={x:leftX,y:topY,w:totalW,h:totalH};
-}
-function draw(){
-  ctx.clearRect(0,0,cv.width,cv.height);
-  ctx.fillStyle=(mode==="dark")?"#121212":"#ffffff"; ctx.fillRect(0,0,cv.width,cv.height);
-  setFont(38,"bold"); ctx.textAlign="center"; ctx.textBaseline="top"; ctx.fillStyle=(mode==="dark")?"var(--gold-dark)":"var(--gold-light)";
-  ctx.fillText(titleInput.value||"Map", cv.width/2, 18);
-  const mapTop=80,mapMarginX=40,boxW=cv.width-mapMarginX*2,boxH=cv.height-mapTop-40;
-  if(mapImg){
-    const fitR=Math.min(boxW/mapImg.width, boxH/mapImg.height),r=fitR*parseFloat(mapScaleInput.value||"1.00");
-    const w=Math.round(mapImg.width*r),h=Math.round(mapImg.height*r),x=Math.round((cv.width-w)/2),y=Math.round(mapTop+(boxH-h)/2);
-    ctx.drawImage(mapImg,x,y,w,h); lastLayout={x,y,w,h};
-    const s=parseFloat(panelSizeInput.value||"0.60"),baseW=w*PWIDTH0*s,baseH=h*PHEIGHT0*s; lastCampRects={};
-    for(const c of camps){ if(!pos[c.id]) pos[c.id]=[0.5,0.5];
-      const need=computePanelSizeForRows(baseW,baseH,withTotals(c.rows).length); const [fx,fy]=pos[c.id]; const cx=x+fx*w,cy=y+fy*h;
-      const L=Math.round(cx-need.W/2),T=Math.round(cy-need.H/2); drawTable(L,T,need.W,need.H,c); lastCampRects[c.id]={L,T,W:need.W,H:need.H};
-    }
-    drawSummaryGroup({x,y,w,h},baseW,baseH);
-  }else{
-    setFont(16,""); ctx.fillStyle=(mode==="dark")?"#bbb":"#555"; ctx.fillText("Pick a preset (auto loads map) or upload your own image.", cv.width/2, mapTop+20);
-    lastLayout=null; lastCampRects={}; lastSummaryGroupLayout=null;
-  }
-
-  /* --- Canvas watermark (export sichtbar) --- */
-  (function drawCopyright(){
-    const pad = 12;
-    const text = `© ${new Date().getFullYear()} — Vinc69cmAløT#2359`;
-    ctx.save();
-    ctx.textAlign = "right";
-    ctx.textBaseline = "bottom";
-    ctx.font = "12px Inter, Segoe UI, Arial, sans-serif";
-    ctx.fillStyle = (mode === "dark") ? "rgba(0,0,0,.55)" : "rgba(255,255,255,.65)";
-    ctx.fillText(text, cv.width - pad + 1, cv.height - pad + 1);
-    ctx.fillStyle = (mode === "dark") ? "rgba(255,255,255,.85)" : "rgba(17,17,17,.85)";
-    ctx.fillText(text, cv.width - pad, cv.height - pad);
-    ctx.restore();
-  })();
+  const needA=computePanelSizeForRows(baseW,baseH,ally.rows.length+1), needE=computePanelSizeForRows(baseW,baseH,enemy.rows.length+1);
+  const H=Math.max(needA.H,needE.H), W=baseW, gap=18;
+  let [fx,fy]=summaryGroupPos; let cx=area.x+fx*area.w, cy=area.y+fy*area.h;
+  const totalW=W*2+gap, totalH=H;
+  cx=clamp(cx, area.x+totalW/2, area.x+area.w-totalW/2);
+  cy=clamp(cy, area.y+totalH/2, area.y+area.h-totalH/2);
+  const leftX=Math.round(cx-totalW/2), topY=Math.round(cy-totalH/2);
+  drawTable(leftX,topY,W,H,ally);
+  drawTable(leftX+W+gap,topY,W,H,enemy);
+  lastSummaryGroupLayout={x:leftX,y:topY,w:totalW,h:totalH};
 }
 
-/* ====== Camp Manager ====== */
-openCampMgr.onclick=()=>{renderCampMgr();campMgrWrap.style.display="flex"};
-closeCampMgr.onclick=()=>{campMgrWrap.style.display="none"};
-addCampBtn.onclick=()=>{const id=uid();camps.push({id,name:`Camp ${camps.length+1}`,color:"#999999",totalTint:mix("#999","#000",0.75),stance:"neutral",rows:[["","",""]]});pos[id]=[0.5,0.5];renderCampMgr();draw()};
-saveCampMgrBtn.onclick=()=>{[...cmBody.querySelectorAll(".cm-row")].forEach(row=>{const id=row.dataset.id,c=camps.find(x=>x.id===id);if(!c)return;c.name=row.querySelector('input[data-f="name"]').value.trim()||"Camp";c.color=row.querySelector('input[data-f="color"]').value;c.totalTint=row.querySelector('input[data-f="tint"]').value;c.stance=row.querySelector('select[data-f="stance"]').value});campMgrWrap.style.display="none";draw()};
+/* ====== Manage Camps ====== */
 function renderCampMgr(){
   cmBody.innerHTML="";
   camps.forEach((c,i)=>{
     const row=document.createElement("div"); row.className="cm-row"; row.dataset.id=c.id;
     row.innerHTML=`<div>${i+1}</div>
       <div><input class="cm-input" data-f="name" value="${c.name}"></div>
-      <div class="inline"><span class="swatch" style="background:${c.color}"></span><input class="cm-input" data-f="color" type="color" value="${c.color}" style="width:100px;padding:4px 6px"></div>
-      <div class="inline"><span class="swatch" style="background:${c.totalTint||'#222'}"></span><input class="cm-input" data-f="tint" type="color" value="${c.totalTint||'#222'}" style="width:100px;padding:4px 6px"></div>
+      <div class="inline"><span class="swatch" style="display:inline-block;width:18px;height:18px;border-radius:4px;margin-right:8px;background:${c.color}"></span><input class="cm-input" data-f="color" type="color" value="${c.color}" style="width:100px;padding:4px 6px"></div>
+      <div class="inline"><span class="swatch" style="display:inline-block;width:18px;height:18px;border-radius:4px;margin-right:8px;background:${c.totalTint||'#222'}"></span><input class="cm-input" data-f="tint" type="color" value="${c.totalTint||'#222'}" style="width:100px;padding:4px 6px"></div>
       <div><select class="cm-input" data-f="stance">
             <option value="neutral" ${c.stance==='neutral'?'selected':''}>Neutral</option>
             <option value="ally" ${c.stance==='ally'?'selected':''}>Ally</option>
@@ -534,58 +618,190 @@ function renderCampMgr(){
       <div class="cm-actions">
         <button class="cm-icon" data-act="autoTint">Auto Tint</button>
         <button class="cm-icon" data-act="dup">Duplicate</button>
-        <button class="cm-icon" data-act="del" style="background:#6a1a1a;border-color:#6a1a1a">Delete</button>
+        <button class="cm-icon" data-act="del">Delete</button>
       </div>
       <div class="small">ID: ${c.id}</div>`;
     cmBody.appendChild(row);
   });
-  cmBody.querySelectorAll('input[data-f="color"]').forEach(inp=>{
-    inp.oninput=()=>{const row=inp.closest('.cm-row');row.querySelectorAll('.swatch')[0].style.background=inp.value;const tint=mix(inp.value,"#000",0.75);const t=row.querySelector('input[data-f="tint"]');t.value=tint;row.querySelectorAll('.swatch')[1].style.background=tint;}
+  document.querySelectorAll('input[data-f="color"]').forEach(inp=>{
+    inp.oninput=()=>{
+      const row=inp.closest('.cm-row');
+      row.querySelectorAll('.swatch')[0].style.background=inp.value;
+      const tint=mix(inp.value,"#000",0.75);
+      const t=row.querySelector('input[data-f="tint"]'); t.value=tint;
+      row.querySelectorAll('.swatch')[1].style.background=tint;
+    };
   });
-  cmBody.querySelectorAll('input[data-f="tint"]').forEach(inp=> inp.oninput=()=> inp.previousElementSibling.style.background=inp.value );
-  cmBody.querySelectorAll('button[data-act]').forEach(btn=>{
-    btn.onclick=()=>{const row=btn.closest('.cm-row');const id=row.dataset.id;const c=camps.find(x=>x.id===id);if(!c)return;const act=btn.dataset.act;
+  document.querySelectorAll('input[data-f="tint"]').forEach(inp=> inp.oninput=()=> inp.previousElementSibling.style.background=inp.value );
+  document.querySelectorAll('button[data-act]').forEach(btn=>{
+    btn.onclick=()=>{
+      const row=btn.closest('.cm-row'); const id=row.dataset.id; const c=camps.find(x=>x.id===id); if(!c)return;
+      const act=btn.dataset.act;
       if(act==="autoTint"){const col=row.querySelector('input[data-f="color"]').value;const tint=mix(col,"#000",0.75);row.querySelector('input[data-f="tint"]').value=tint;row.querySelectorAll('.swatch')[1].style.background=tint;}
       if(act==="dup"){const copy={...c,id:uid(),name:(row.querySelector('input[data-f="name"]').value||c.name)+" (Copy)",rows:c.rows.map(r=>[...r])};camps.splice(camps.indexOf(c)+1,0,copy);pos[copy.id]=[...(pos[c.id]||[0.5,0.5])];renderCampMgr();}
       if(act==="del"){if(!confirm(`Delete camp "${c.name}"?`))return;camps=camps.filter(x=>x.id!==id);delete pos[id];renderCampMgr();draw();}
     };
   });
-  cmBody.querySelectorAll('select[data-f="stance"]').forEach(sel=> sel.onchange=()=>{const id=sel.closest('.cm-row').dataset.id;const c=camps.find(x=>x.id===id);if(c){c.stance=sel.value;draw();}});
+  document.querySelectorAll('select[data-f="stance"]').forEach(sel=> sel.onchange=()=>{const id=sel.closest('.cm-row').dataset.id;const c=camps.find(x=>x.id===id);if(c){c.stance=sel.value;draw();}});
 }
+saveCampMgrBtn.onclick=()=>{
+  [...document.querySelectorAll(".cm-row")].forEach(row=>{
+    const id=row.dataset.id,c=camps.find(x=>x.id===id); if(!c)return;
+    c.name=row.querySelector('input[data-f="name"]').value.trim()||"Camp";
+    c.color=row.querySelector('input[data-f="color"]').value;
+    c.totalTint=row.querySelector('input[data-f="tint"]').value;
+    c.stance=row.querySelector('select[data-f="stance"]').value;
+  });
+  campMgrWrap.style.display="none"; campMgrWrap.setAttribute("aria-hidden","true");
+  draw();
+};
+addCampBtn.onclick=()=>{
+  const id=uid();
+  const c={id,name:`Camp ${camps.length+1}`,color:"#999999",totalTint:mix("#999","#000",0.75),stance:"neutral",rows:[["","",""]]};
+  camps.push(c); pos[c.id]=[0.5,0.5]; renderCampMgr(); draw();
+};
 
-/* ====== Edit Data (autosave) ====== */
-openDataBtn.onclick=()=>{openEditor()};
-closeEditor.onclick=()=>{editorWrap.style.display="none"};
-cancelDataBtn.onclick=()=>{editorWrap.style.display="none"};
-function openEditor(){campSelect.innerHTML=camps.map((c,i)=>`<option value="${i}">${c.name}</option>`).join("");currentEditorCampIndex=parseInt(campSelect.value||"0",10);renderRows();editorWrap.style.display="flex"}
+/* ====== Edit Data ====== */
+function isEditorOpen(){return editorWrap && getComputedStyle(editorWrap).display!=="none"}
+function refreshEditorUI(preserveName){
+  campSelect.innerHTML=camps.map((c,i)=>`<option value="${i}">${c.name}</option>`).join("");
+  let idx=0; if(preserveName){const i=camps.findIndex(c=>(c.name||"")===preserveName); if(i>=0) idx=i;}
+  currentEditorCampIndex=idx; campSelect.value=String(idx); renderRows();
+}
+function openEditor(){refreshEditorUI(camps[currentEditorCampIndex]?.name); editorWrap.style.display="flex"; editorWrap.setAttribute("aria-hidden","false")}
+document.addEventListener("click",(ev)=>{
+  const openBtn=ev.target.closest("#openData");
+  const closeBtn=ev.target.closest("#closeEditor");
+  const cancelBtn=ev.target.closest("#cancelData");
+  if(openBtn){ev.preventDefault(); openEditor()}
+  if(closeBtn||cancelBtn){ev.preventDefault(); editorWrap.style.display="none"; editorWrap.setAttribute("aria-hidden","true")}
+});
 function rowTemplate(i,kd,pw,kp){return`
   <div class="et-row">
     <div><input class="et-input" data-i="${i}" data-f="kd"  value="${kd||""}" placeholder="e.g. 2359"></div>
     <div><input class="et-input" data-i="${i}" data-f="pow" value="${pw||""}" placeholder="e.g. 23,8B"></div>
     <div><input class="et-input" data-i="${i}" data-f="kp"  value="${kp||""}"  placeholder="e.g. 1.234,5B"></div>
     <div class="cm-actions"><button class="cm-icon" data-move="${i}" data-dir="-1">⬆️</button><button class="cm-icon" data-move="${i}" data-dir="1">⬇️</button></div>
-    <div class="cm-actions"><button class="cm-icon" data-del="${i}" style="background:#6a1a1a;border-color:#6a1a1a">🗑️</button></div>
+    <div class="cm-actions"><button class="cm-icon" data-del="${i}">🗑️</button></div>
   </div>`}
-function renderRows(){const idx=parseInt(campSelect.value||"0",10),r=camps[idx]?.rows||[];rowsBody.innerHTML=r.map((row,i)=>rowTemplate(i,row[0],row[1],row[2])).join("");
+function renderRows(){
+  const idx=parseInt(campSelect.value||"0",10), r=camps[idx]?.rows||[];
+  rowsBody.innerHTML=r.map((row,i)=>rowTemplate(i,row[0],row[1],row[2])).join("");
   rowsBody.querySelectorAll("button[data-del]").forEach(b=>b.onclick=()=>{const i=parseInt(b.dataset.del,10);camps[idx].rows.splice(i,1);renderRows()});
   rowsBody.querySelectorAll("button[data-move]").forEach(b=>b.onclick=()=>{const i=parseInt(b.dataset.move,10),d=parseInt(b.dataset.dir,10);const j=i+d;if(j<0||j>=camps[idx].rows.length)return;const t=camps[idx].rows[i];camps[idx].rows[i]=camps[idx].rows[j];camps[idx].rows[j]=t;renderRows()});
-  rowsBody.querySelectorAll("input.et-input").forEach(inp=>{const f=inp.dataset.f;const val=()=>{if(f==="kd")inp.classList.toggle("invalid",!validKD(inp.value));else{inp.value=normalizePowerStr(inp.value);inp.classList.toggle("invalid",!validBM(inp.value))}};inp.addEventListener("input",val);val();inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addRowBtn.click()}})});
+  rowsBody.querySelectorAll("input.et-input").forEach(inp=>{
+    const f=inp.dataset.f;
+    const val=()=>{if(f==="kd")inp.classList.toggle("invalid",!validKD(inp.value));else{inp.value=normalizePowerStr(inp.value);inp.classList.toggle("invalid",!validBM(inp.value))}};
+    inp.addEventListener("input",val); val();
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addRowBtn.click()}})
+  });
 }
-function collectRowsFromEditor(){const rows=[];rowsBody.querySelectorAll(".et-row").forEach(div=>{const I=div.querySelectorAll("input");const kd=(I[0]?.value||"").trim();const pow=normalizePowerStr((I[1]?.value||"").trim());const kp=normalizePowerStr((I[2]?.value||"").trim());if(kd||pow||kp)rows.push([kd,pow,kp])});return rows}
+function collectRowsFromEditor(){
+  const rows=[]; rowsBody.querySelectorAll(".et-row").forEach(div=>{
+    const I=div.querySelectorAll("input");
+    const kd=(I[0]?.value||"").trim();
+    const pow=normalizePowerStr((I[1]?.value||"").trim());
+    const kp=normalizePowerStr((I[2]?.value||"").trim());
+    if(kd||pow||kp)rows.push([kd,pow,kp]);
+  }); return rows;
+}
 campSelect.onchange=()=>{const old=currentEditorCampIndex;const rows=collectRowsFromEditor();if(camps[old])camps[old].rows=rows;currentEditorCampIndex=parseInt(campSelect.value||"0",10);renderRows();draw()}
 addRowBtn.onclick=()=>{const idx=currentEditorCampIndex;const rows=collectRowsFromEditor();if(camps[idx])camps[idx].rows=rows;camps[idx].rows.push(["","",""]);renderRows()}
 resetCampBtn.onclick=()=>{if(!confirm("Really clear this camp's data?"))return;const idx=currentEditorCampIndex;camps[idx].rows=[["","",""]];renderRows()}
-applyDataBtn.onclick=()=>{const idx=currentEditorCampIndex;camps[idx].rows=collectRowsFromEditor();editorWrap.style.display="none";draw()}
+applyDataBtn.onclick=()=>{const idx=currentEditorCampIndex;camps[idx].rows=collectRowsFromEditor();editorWrap.style.display="none";editorWrap.setAttribute("aria-hidden","true");draw()}
 
-/* Manual persistence */
-saveDataBtn.onclick=()=>{localStorage.setItem(DATA_KEY,JSON.stringify(camps));alert("Data saved ✔")}
-loadDataBtn.onclick=()=>{const raw=localStorage.getItem(DATA_KEY);if(!raw)return alert("No saved data.");try{const obj=JSON.parse(raw);if(!Array.isArray(obj))return alert("Invalid format.");obj.forEach(c=>{if(!c.id)c.id=uid();if(!c.totalTint)c.totalTint=mix(c.color||"#999","#000",0.75);if(!Array.isArray(c.rows))c.rows=[["","",""]];if(!c.stance)c.stance="neutral"});camps=obj;const newPos={};camps.forEach(c=>newPos[c.id]=pos[c.id]||[0.5,0.5]);pos=newPos;draw();alert("Data loaded ✔")}catch{alert("Error while loading.")}}
-exportDataBtn.onclick=async()=>{const txt=JSON.stringify(camps,null,2);try{await navigator.clipboard.writeText(txt);alert("JSON copied ✔")}catch{const blob=new Blob([txt],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="siege_overlay_data.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}}
-importDataBtn.onclick=()=>{const txt=prompt("Paste JSON here:");if(!txt)return;try{const obj=JSON.parse(txt);if(!Array.isArray(obj))return alert("Invalid format.");obj.forEach(c=>{if(!c.id)c.id=uid();if(!c.totalTint)c.totalTint=mix(c.color||"#999","#000",0.75);if(!Array.isArray(c.rows))c.rows=[["","",""]];if(!c.stance)c.stance="neutral"});camps=obj;const newPos={};camps.forEach(c=>newPos[c.id]=pos[c.id]||[0.5,0.5]);pos=newPos;draw();alert("Data imported ✔")}catch{alert("Could not parse JSON.")}}
+/* ====== Persistence (Save/Load/Export/Import) mit Map-Validierung ====== */
+saveDataBtn.onclick=()=>{try{localStorage.setItem(DATA_KEY,JSON.stringify(serializeState()));alert("Data saved ✔")}catch(e){console.error(e);alert("Save failed.")}};
+loadDataBtn.onclick=()=>{
+  const raw=localStorage.getItem(DATA_KEY);
+  if(!raw) return alert("No saved data.");
+  try{
+    const state=JSON.parse(raw);
+    const incomingKey=state.mapKey||"", incomingLabel=state.mapLabel||incomingKey||"Unknown";
+    const curKey=getCurrentMapKey(), curLabel=getCurrentMapLabel();
+    if(incomingKey && incomingKey!==curKey){
+      alert(`Error: Saved data belongs to map "${incomingLabel}", but current is "${curLabel}". Please select the correct map preset first.`);
+      return;
+    }
+    const prev=camps[currentEditorCampIndex]?.name;
+    applyState(state); if(state.title) titleInput.value=state.title;
+    draw(); if(isEditorOpen()) refreshEditorUI(prev);
+    alert("Data loaded ✔");
+  }catch(e){console.error(e);alert("Error while loading.")}}
+exportDataBtn.onclick=async()=>{
+  try{
+    const state=serializeState();
+    const txt=JSON.stringify(state,null,2);
+    const safeKey=(state.mapKey||"map").replace(/[^a-z0-9_-]/gi,"_");
+    try{await navigator.clipboard.writeText(txt); alert("JSON copied ✔")}
+    catch{
+      const blob=new Blob([txt],{type:"application/json"}), url=URL.createObjectURL(blob);
+      const a=document.createElement("a"); a.href=url; a.download=`siege_overlay_state_${safeKey}.json`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }
+  }catch(e){console.error(e);alert("Export failed.")}};
+importDataBtn.onclick=()=>{
+  const txt=prompt("Paste JSON here:"); if(!txt) return;
+  try{
+    const state=JSON.parse(txt);
+    const incomingKey=state.mapKey||"", incomingLabel=state.mapLabel||incomingKey||"Unknown";
+    const curKey=getCurrentMapKey(), curLabel=getCurrentMapLabel();
+    if(incomingKey && incomingKey!==curKey){
+      alert(`Error: Imported data belongs to map "${incomingLabel}", but current is "${curLabel}". Please select the correct map preset first.`);
+      return;
+    }
+    const prev=camps[currentEditorCampIndex]?.name;
+    applyState(state); if(state.title) titleInput.value=state.title;
+    draw(); if(isEditorOpen()) refreshEditorUI(prev);
+    alert("Data imported ✔");
+  }catch(e){console.error(e);alert("Could not parse JSON.")}};
 
-/* ====== Init: clear saved data & load Heroic Anthem (with map) ====== */
-(function initDefault(){
-  try{localStorage.removeItem(DATA_KEY);}catch(e){}
+/* ====== Main draw ====== */
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle=(mode==="dark")?"#0e1116":"#ffffff"; ctx.fillRect(0,0,cv.width,cv.height);
+
+  setFont(38,"bold"); ctx.textAlign="center"; ctx.textBaseline="top";
+  ctx.fillStyle=(mode==="dark")?"var(--gold-dark)":"var(--gold-light)";
+  ctx.fillText(titleInput.value||"Map", cv.width/2, 18);
+
+  const mapTop=80, mapMarginX=40, boxW=cv.width-mapMarginX*2, boxH=cv.height-mapTop-40;
+
+  if(mapImg){
+    const fitR=Math.min(boxW/mapImg.width, boxH/mapImg.height);
+    const r=fitR*parseFloat(mapScaleInput.value||"1.00");
+    const w=Math.round(mapImg.width*r), h=Math.round(mapImg.height*r);
+    const x=Math.round((cv.width-w)/2), y=Math.round(mapTop+(boxH-h)/2);
+
+    ctx.drawImage(mapImg,x,y,w,h);
+    lastLayout={x,y,w,h};
+
+    const s=parseFloat(panelSizeInput.value||"0.60");
+    const baseW=w*PWIDTH0*s, baseH=h*PHEIGHT0*s;
+    lastCampRects={};
+
+    for(const c of camps){
+      if(!pos[c.id]) pos[c.id]=[0.5,0.5];
+      const need=computePanelSizeForRows(baseW,baseH,withTotals(c.rows).length);
+      const [fx,fy]=pos[c.id];
+      const cx=x+fx*w, cy=y+fy*h;
+      const L=Math.round(cx-need.W/2), T=Math.round(cy-need.H/2);
+      drawTable(L,T,need.W,need.H,c);
+      lastCampRects[c.id]={L,T,W:need.W,H:need.H};
+    }
+
+    drawSummaryGroup({x,y,w,h},baseW,baseH);
+  }else{
+    setFont(16,"");
+    ctx.fillStyle=(mode==="dark")?"#bbb":"#555";
+    ctx.fillText("Pick a preset (auto loads map) or upload your own image.", cv.width/2, mapTop+20);
+    lastLayout=null; lastCampRects={}; lastSummaryGroupLayout=null;
+  }
+}
+
+/* ====== Init ====== */
+(function init(){
+  document.getElementById("cpYear").textContent = new Date().getFullYear();
   presetSel.value="heroic4";
   titleInput.value=getPresetTitle();
   applyPreset("heroic4", false);
