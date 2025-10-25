@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -50,7 +50,7 @@
   .badge:focus-within{box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 60%, transparent)}
   .row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center}
   .sep{width:1px; height:20px; background:var(--border)}
-  canvas{max-width:100%; height:auto; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.35); background:#121212}
+  canvas{max-width:100%; height:auto; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.35); background:#121212; cursor:default}
   .hint{opacity:.85; font-size:13px; margin-top:-6px}
 
   /* Modal */
@@ -78,7 +78,7 @@
   .choose-preview .big img{width:100%; height:100%; object-fit:contain; display:block; background:#000}
   .choose-preview .row{justify-content:space-between}
 
-  /* Manage Camps table */
+  /* Manage Camps / Edit Data (gekürzt – gleich wie vorher) */
   .cm-table{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--panel)}
   .cm-scroll{max-height:min(56vh,620px); overflow:auto; position:relative; scrollbar-gutter:stable}
   .cm-head,.cm-row{display:grid; grid-template-columns: var(--cm-col-idx) var(--cm-col-name) var(--cm-col-color) var(--cm-col-tint) var(--cm-col-stance) var(--cm-col-actions) var(--cm-col-info); align-items:center}
@@ -93,7 +93,6 @@
   .cm-icon{padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer; font-weight:600}
   .cm-actions .cm-icon[data-act="del"]{background:#8a2b2b; border-color:#8a2b2b; color:#fff}
 
-  /* Edit Data table */
   .et-table{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--panel)}
   .et-body{max-height:min(56vh,620px); overflow:auto; position:relative; scrollbar-gutter:stable}
   .et-head,.et-row{display:grid; grid-template-columns: var(--col-kd) var(--col-pow) var(--col-kp) var(--col-order) var(--col-actions); align-items:center}
@@ -106,7 +105,7 @@
   .et-input{width:100%; padding:8px 10px; border:1px solid var(--input-border); border-radius:8px; background:var(--input-bg); color:var(--input-fg)}
   .et-input.invalid{border-color:#d32f2f; box-shadow:0 0 0 3px color-mix(in oklab, #d32f2f 25%, transparent)}
 
-  /* Site copyright (webseite, nicht im Canvas) */
+  /* Copyright (Seite) */
   .site-copyright{
     position:fixed; right:14px; bottom:12px;
     padding:6px 10px; border-radius:10px;
@@ -160,7 +159,7 @@
 
   <div class="site-copyright">© <span id="cpYear"></span> — Vinc69cmAløT#2359</div>
 
-  <!-- Choose Map Modal (with big preview) -->
+  <!-- Choose Map Modal -->
   <div id="chooseMapWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal">
       <header>
@@ -172,9 +171,7 @@
       </header>
       <div class="content">
         <div class="choose-layout">
-          <div>
-            <div class="preset-grid" id="presetGrid"></div>
-          </div>
+          <div><div class="preset-grid" id="presetGrid"></div></div>
           <div class="choose-preview">
             <div class="row">
               <div id="chooseLabel" class="preset-title">—</div>
@@ -187,7 +184,7 @@
     </div>
   </div>
 
-  <!-- One-step Upload Modal -->
+  <!-- Upload Modal -->
   <div id="uploadWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal" style="max-width:720px">
       <header>
@@ -205,7 +202,6 @@
             </div>
           </div>
         </div>
-
         <div class="choose-opt">
           <input type="radio" name="uplChoice" id="optCustom">
           <div>
@@ -220,11 +216,7 @@
           </div>
         </div>
       </div>
-      <footer>
-        <div class="row" style="margin-left:auto">
-          <button id="pickImage" class="btn">Pick image…</button>
-        </div>
-      </footer>
+      <footer><div class="row" style="margin-left:auto"><button id="pickImage" class="btn">Pick image…</button></div></footer>
     </div>
   </div>
 
@@ -278,12 +270,11 @@
     </div>
   </div>
 
-  <!-- Hidden file input -->
   <input id="fileInput" type="file" accept="image/*" style="display:none"/>
 
 <script>
 /* ====== DOM + STATE ====== */
-const DATA_KEY="siege_overlay_state_v18c";
+const DATA_KEY="siege_overlay_state_v18e";
 const PWIDTH0=0.28, PHEIGHT0=0.18;
 const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
 const fileInput=document.getElementById("fileInput");
@@ -336,12 +327,11 @@ const importDataBtn=document.getElementById("importData");
 let mapImg=null, dragOn=false;
 let camps=[], pos={};
 let summaryGroupPos=[0.50,0.50], lastSummaryGroupLayout=null, showSummary=true;
-let dragging=null, draggingSummary=false, lastLayout=null, lastCampRects={};
+let lastLayout=null, lastCampRects={};
 let currentEditorCampIndex=0;
-let summaryDragLay=null;
 
-/* one-step plan */
-let pendingUploadPlan=null; // { type:"preset", key } | { type:"custom", count }
+/* upload plan */
+let pendingUploadPlan=null;
 let selectedPresetKey=null;
 
 /* ====== Utils ====== */
@@ -362,13 +352,10 @@ const getPresetTitleByKey=(key)=>{const labels={heroic4:"Heroic Anthem (4)",warr
 const getTotalTint=c=> document.body.dataset.theme==="light"?(c.totalTintLight||mix(c.color,"#fff",0.85)):(c.totalTint||mix(c.color,"#000",0.75));
 
 /* ====== Preset images ====== */
-const presetImages={
-  heroic4:"ha.png",warriors6:"wu.png",tide4:"tides.png",storm6:"stratagems.png",
-  invictus6:"ai.png",britain4:"kob.png",keener6:"kb.png",orleans6:"orleans.png",song4:"troy.png"
-};
+const presetImages={heroic4:"ha.png",warriors6:"wu.png",tide4:"tides.png",storm6:"stratagems.png",invictus6:"ai.png",britain4:"kob.png",keener6:"kb.png",orleans6:"orleans.png",song4:"troy.png"};
 function loadMapForPreset(key){const src=presetImages[key]; if(!src) return; const img=new Image(); img.onload=()=>{mapImg=img;draw()}; img.src=src}
 
-/* ====== Presets (positions/colors) ====== */
+/* ====== Presets ====== */
 const mapPresets={
   orleans6:{camps:[
     {name:"Brittany",color:"#BDBDBD",pos:[0.18,0.12]},
@@ -462,8 +449,8 @@ resetAllPosBtn.onclick=()=>{const v=presetSel.value; if(v!=="custom"&&mapPresets
 dlBtn.onclick=()=>{const a=document.createElement("a");a.download=`MapOverlay_${document.body.dataset.theme}.png`;a.href=cv.toDataURL("image/png");a.click()};
 presetSel.onchange=()=>{const v=presetSel.value;if(v==="custom")return;titleInput.value=getPresetTitleByKey(v);applyPreset(v,false);loadMapForPreset(v)};
 
-/* Drag toggle */
-function syncDragBtn(){toggleDragBtn.textContent=`Drag: ${dragOn?"ON":"OFF"}`;toggleDragBtn.style.opacity=dragOn?"1":"0.7"}
+/* Drag toggle UI */
+function syncDragBtn(){toggleDragBtn.textContent=`Drag: ${dragOn?"ON":"OFF"}`;toggleDragBtn.style.opacity=dragOn?"1":"0.7";cv.style.cursor=dragOn?"grab":"default"}
 syncDragBtn(); toggleDragBtn.onclick=()=>{dragOn=!dragOn;syncDragBtn()}
 
 /* ====== Choose Map Modal ====== */
@@ -478,20 +465,16 @@ const presetMeta=[
   { key:"orleans6",label:"Siege of Orléans (6)",img:"orleans.png" },
   { key:"song4",label:"Song of Troy (4)",img:"troy.png" },
 ];
-
 function openChooseMap(){
   renderPresetList();
-  // Vorbelegung
   selectedPresetKey = presetSel.value && presetSel.value !== "custom" ? presetSel.value : "heroic4";
   updateChoosePreview(selectedPresetKey);
-  // Markieren
   markSelectedCard();
   chooseMapWrap.style.display="flex";
   chooseMapWrap.setAttribute("aria-hidden","false");
 }
 chooseBtn.onclick=openChooseMap;
 closeChooseMapBtn.onclick=()=>{chooseMapWrap.style.display="none"; chooseMapWrap.setAttribute("aria-hidden","true")};
-
 function renderPresetList(){
   presetGrid.innerHTML="";
   presetMeta.forEach(p=>{
@@ -506,17 +489,13 @@ function renderPresetList(){
     presetGrid.appendChild(card);
   });
 }
-function markSelectedCard(){
-  presetGrid.querySelectorAll(".preset-card").forEach(el=>{
-    el.setAttribute("aria-selected", el.dataset.key===selectedPresetKey ? "true" : "false");
-  });
-}
+function markSelectedCard(){presetGrid.querySelectorAll(".preset-card").forEach(el=>{el.setAttribute("aria-selected", el.dataset.key===selectedPresetKey ? "true" : "false")})}
 function updateChoosePreview(key){
   const meta=presetMeta.find(x=>x.key===key);
   if(!meta){ chooseLabel.textContent="—"; chooseImg.removeAttribute("src"); return; }
   chooseLabel.textContent=(meta.label||key).replace(/\s*\(\d+\)\s*$/,'');
   chooseMeta.textContent = "Full map preview";
-  chooseImg.src = meta.img; // vollständige Karte, object-fit: contain zeigt sie komplett
+  chooseImg.src = meta.img;
 }
 useSelectedBtn.onclick=()=>{
   if(!selectedPresetKey) return;
@@ -528,7 +507,7 @@ useSelectedBtn.onclick=()=>{
   closeChooseMapBtn.click();
 };
 
-/* ====== ONE-STEP UPLOAD ====== */
+/* ====== Upload ====== */
 uploadBtn.onclick=()=>{
   pendingUploadPlan=null;
   uplPresetSelect.innerHTML=presetMeta.map(p=>{
@@ -538,33 +517,19 @@ uploadBtn.onclick=()=>{
   uploadWrap.style.display="flex"; uploadWrap.setAttribute("aria-hidden","false");
 };
 closeUploadBtn.onclick=()=>{uploadWrap.style.display="none"; uploadWrap.setAttribute("aria-hidden","true")};
-
 pickImageBtn.onclick=()=>{
-  if(optCustom.checked){
-    pendingUploadPlan={type:"custom",count:parseInt(uplCustomCount.value||"4",10)};
-  }else{
-    const key=uplPresetSelect.value; if(!mapPresets[key]) return alert("Please select a valid preset.");
-    pendingUploadPlan={type:"preset",key};
-  }
-  fileInput.value="";
-  if(typeof fileInput.showPicker==="function"){
-    try{fileInput.showPicker();return;}catch(e){}
-  }
-  fileInput.click();
+  if(optCustom.checked){ pendingUploadPlan={type:"custom",count:parseInt(uplCustomCount.value||"4",10)} }
+  else{ const key=uplPresetSelect.value; if(!mapPresets[key]) return alert("Please select a valid preset."); pendingUploadPlan={type:"preset",key} }
+  fileInput.value=""; if(typeof fileInput.showPicker==="function"){ try{fileInput.showPicker();return;}catch{} } fileInput.click();
 };
-
 fileInput.onchange=()=>{
   const f=fileInput.files[0]; if(!f) return;
   if(!pendingUploadPlan){alert("Please choose how to use the image first."); fileInput.value=""; return;}
   const img=new Image();
   img.onload=()=>{
     mapImg=img;
-    if(pendingUploadPlan.type==="preset"){
-      const key=pendingUploadPlan.key;
-      presetSel.value=key; titleInput.value=getPresetTitleByKey(key); applyPreset(key,false);
-    }else{
-      buildCustomMap(pendingUploadPlan.count||4);
-    }
+    if(pendingUploadPlan.type==="preset"){ const key=pendingUploadPlan.key; presetSel.value=key; titleInput.value=getPresetTitleByKey(key); applyPreset(key,false); }
+    else { buildCustomMap(pendingUploadPlan.count||4); }
     pendingUploadPlan=null;
     uploadWrap.style.display="none"; uploadWrap.setAttribute("aria-hidden","true");
     draw();
@@ -573,7 +538,7 @@ fileInput.onchange=()=>{
   img.src=URL.createObjectURL(f);
 };
 
-/* ====== Manage Camps ====== */
+/* ====== Manage Camps / Edit Data (Events) ====== */
 document.addEventListener("click",(ev)=>{
   if(ev.target.id==="openCampMgr"){ev.preventDefault(); showCampMgr()}
   if(ev.target.id==="closeCampMgr"){ev.preventDefault(); hideCampMgr()}
@@ -590,7 +555,6 @@ function showCampMgr(){
     if(!Array.isArray(camps)||camps.length===0){
       const v=presetSel?.value||"heroic4";
       applyPreset(mapPresets[v]?v:"heroic4",false);
-      loadMapForPreset(mapPresets[v]?v:"heroic4");
     }
     renderCampMgr();
     campMgrWrap.style.display="flex";
@@ -634,7 +598,7 @@ function renderCampMgr(){
       const row=btn.closest('.cm-row'); const id=row.dataset.id; const c=camps.find(x=>x.id===id); if(!c)return;
       const act=btn.dataset.act;
       if(act==="autoTint"){const col=row.querySelector('input[data-f="color"]').value;const tint=mix(col,"#000",0.75);row.querySelector('input[data-f="tint"]').value=tint;row.querySelectorAll('.swatch')[1].style.background=tint;}
-      if(act==="dup"){const copy={...c,id:uid(),name:(row.querySelector('input[data-f="name"]').value||c.name)+" (Copy)",rows:c.rows.map(r=>[...r])};camps.splice(camps.indexOf(c)+1,0,copy);pos[copy.id]=[...(pos[c.id]||[0.5,0.5])];renderCampMgr();}
+      if(act==="dup"){const copy={...c,id:uid(),name:(row.querySelector('input[data-f="name"]').value||c.name)+" (Copy)",rows:c.rows.map(r=>[...r])};camps.splice(camps.indexOf(c)+1,0,copy);pos[copy.id]=[...(pos[c.id]||[0.5,0.5])];renderCampMgr();draw();}
       if(act==="del"){if(!confirm(`Delete camp "${c.name}"?`))return;camps=camps.filter(x=>x.id!==id);delete pos[id];renderCampMgr();draw();}
     };
   });
@@ -756,11 +720,10 @@ if(importDataBtn){ importDataBtn.onclick = () => {
     alert("Data imported ✔");
   } catch (e) { console.error(e); alert("Could not parse JSON."); }
 }; }
-
 function sanitizeCamps(arr){
   return (arr||[]).map(c=>{
     const id=c.id||uid();
-    return { id, name:c.name||="Camp", color:c.color||="#999999",
+    return { id, name:c.name||"Camp", color:c.color||"#999999",
       totalTint:c.totalTint||mix(c.color||"#999","#000",0.75),
       stance:c.stance||"neutral",
       rows:Array.isArray(c.rows)?c.rows.map(r=>[r[0]||"",r[1]||"",r[2]||""]):[["","",""]] };
@@ -810,12 +773,9 @@ function buildCustomMap(count){
   const src = (count >= 6) ? palette6 : palette4;
 
   camps = src.map(d => ({
-    id: uid(),
-    name: d.name,
-    color: d.color,
-    totalTint: mix(d.color, "#000", 0.75),
-    stance: "neutral",
-    rows: [["", "", ""]],
+     id: uid(), name: d.name, color: d.color,
+     totalTint: mix(d.color, "#000", 0.75), stance: "neutral",
+     rows: [["", "", ""]],
   }));
   pos = {}; camps.forEach((c,i)=> pos[c.id] = src[i].pos);
   summaryGroupPos = [0.50,0.50];
@@ -923,6 +883,97 @@ function drawSummaryGroup(area,baseW,baseH){
   lastSummaryGroupLayout={x:leftX,y:topY,w:totalW,h:totalH};
 }
 
+/* ====== Dragging (mit Offset, kein Springen) ====== */
+function canvasPoint(evt){
+  const rect=cv.getBoundingClientRect();
+  return { x:(evt.clientX-rect.left)*(cv.width/rect.width), y:(evt.clientY-rect.top)*(cv.height/rect.height) };
+}
+function hitTestCamp(mx,my){
+  const ids=[...camps.map(c=>c.id)];
+  for(let i=ids.length-1;i>=0;i--){
+    const id=ids[i], r=lastCampRects[id];
+    if(!r) continue;
+    if(mx>=r.L && mx<=r.L+r.W && my>=r.T && my<=r.T+r.H) return {id,rect:r};
+  }
+  return null;
+}
+function insideSummary(mx,my){
+  const s=lastSummaryGroupLayout;
+  if(!s) return false;
+  return (mx>=s.x && mx<=s.x+s.w && my>=s.y && my<=s.y+s.h);
+}
+function getSummaryCenter(){
+  if(!lastSummaryGroupLayout) return null;
+  return {
+    cx: lastSummaryGroupLayout.x + lastSummaryGroupLayout.w/2,
+    cy: lastSummaryGroupLayout.y + lastSummaryGroupLayout.h/2,
+    halfW: lastSummaryGroupLayout.w/2,
+    halfH: lastSummaryGroupLayout.h/2
+  };
+}
+
+let dragState=null; // {type:'camp'|'summary', id?, offX, offY}
+
+cv.addEventListener('mousedown', (e)=>{
+  if(!dragOn || !lastLayout) return;
+  const {x:mx,y:my}=canvasPoint(e);
+
+  // Summary zuerst
+  if(showSummary && insideSummary(mx,my)){
+    const sc = getSummaryCenter();
+    if(sc){
+      dragState={type:'summary', offX: mx - sc.cx, offY: my - sc.cy};
+      cv.style.cursor='grabbing';
+      e.preventDefault();
+      return;
+    }
+  }
+  // Camp?
+  const hit=hitTestCamp(mx,my);
+  if(hit){
+    const centerX=hit.rect.L + hit.rect.W/2;
+    const centerY=hit.rect.T + hit.rect.H/2;
+    dragState={type:'camp', id:hit.id, offX: mx-centerX, offY: my-centerY};
+    cv.style.cursor='grabbing';
+    e.preventDefault();
+  }
+});
+
+window.addEventListener('mousemove', (e)=>{
+  if(!dragOn || !lastLayout || !dragState) return;
+  const {x:mx,y:my}=canvasPoint(e);
+  const area=lastLayout;
+
+  if(dragState.type==='summary'){
+    let targetCx = mx - dragState.offX;
+    let targetCy = my - dragState.offY;
+    const sc = getSummaryCenter();
+    const halfW = sc?.halfW ?? 0, halfH = sc?.halfH ?? 0;
+    targetCx = clamp(targetCx, area.x + halfW, area.x + area.w - halfW);
+    targetCy = clamp(targetCy, area.y + halfH, area.y + area.h - halfH);
+    const fx= (targetCx - area.x) / area.w;
+    const fy= (targetCy - area.y) / area.h;
+    summaryGroupPos=[clamp(fx,0,1), clamp(fy,0,1)];
+    draw(); e.preventDefault(); return;
+  }
+  if(dragState.type==='camp'){
+    const id=dragState.id;
+    const cx=mx - dragState.offX;
+    const cy=my - dragState.offY;
+    const fx=clamp((cx-area.x)/area.w, 0, 1);
+    const fy=clamp((cy-area.y)/area.h, 0, 1);
+    pos[id]=[fx,fy];
+    draw(); e.preventDefault(); return;
+  }
+});
+
+window.addEventListener('mouseup', ()=>{
+  if(dragState){ dragState=null; cv.style.cursor=dragOn?'grab':'default'; }
+});
+cv.addEventListener('mouseleave', ()=>{
+  if(dragState){ dragState=null; cv.style.cursor=dragOn?'grab':'default'; }
+});
+
 /* ====== Main draw ====== */
 function draw(){
   const mode=document.body.dataset.theme;
@@ -975,9 +1026,6 @@ function draw(){
   applyPreset("heroic4", false);
   loadMapForPreset("heroic4");
   draw();
-
-  // Open chooser from keyboard for quick check
-  // openChooseMap();
 })();
 </script>
 </body>
