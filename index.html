@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -8,50 +8,50 @@
   *,*::before,*::after{box-sizing:border-box}
   :root{
     --gold-dark:#FFC107; --gold-light:#D4AF37;
-    --bg:#121212; --fg:#eaeaea; --panel:#1b1b1b; --panel-2:#222;
-    --border:#343434; --subtle:#2a2a2a;
-    --btn-bg:#1f1f1f; --btn-fg:#ffffff; --btn-border:#333;
-    --badge-bg:#1a1a1a; --badge-fg:#eaeaea; --badge-border:#333;
-    --input-bg:#101010; --input-fg:#eaeaea; --input-border:#3a3a3a;
-    --accent:#FFC107;
-    --col-kd:140px; --col-pow:160px; --col-kp:160px; --col-order:112px; --col-actions:112px;
-    --cm-col-idx:42px; --cm-col-name:1fr; --cm-col-color:140px; --cm-col-tint:120px;
-    --cm-col-stance:160px; --cm-col-actions:140px; --cm-col-info:180px;
-  }
-  body[data-theme="dark"]{
     --bg:#0e1116; --fg:#f2f5fa; --panel:#0f141b; --panel-2:#141b24;
     --border:#2b3340; --subtle:#1a2230;
     --btn-bg:#1b2533; --btn-fg:#ffffff; --btn-border:#3a4a63;
     --badge-bg:#141b24; --badge-fg:#e9eef7; --badge-border:#304157;
     --input-bg:#0d131a; --input-fg:#edf2f9; --input-border:#3a4a63;
-    --accent:#ffbf2e;
   }
   body[data-theme="light"]{
     --bg:#f5f7fb; --fg:#0f172a; --panel:#ffffff; --panel-2:#f2f4f8;
     --border:#c9ced6; --subtle:#e6e9ef;
-    --btn-bg:#111827; --btn-fg:#ffffff; --btn-border:#0b1220;
+    --btn-bg:#111827;        /* dunkler Toolbar-Button für guten Kontrast */
+    --btn-fg:#ffffff;
+    --btn-border:#0b1220;
     --badge-bg:#ffffff; --badge-fg:#0f172a; --badge-border:#c9ced6;
     --input-bg:#ffffff; --input-fg:#0f172a; --input-border:#c9ced6;
-    --accent:#c69300;
   }
-  body{
-    margin:0; font-family:system-ui,Inter,Segoe UI,Roboto,Arial,sans-serif;
-    background:var(--bg); color:var(--fg);
-    display:flex; flex-direction:column; align-items:center; gap:12px; padding:14px;
-    text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased;
-  }
+  body{margin:0; font-family:system-ui,Inter,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--fg); display:flex; flex-direction:column; align-items:center; gap:12px; padding:14px}
   .toolbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center}
-  .btn,.badge,select,input[type="text"]{font-size:14px}
-  .btn{padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer; transition:box-shadow .15s, transform .02s}
+  .btn{padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer}
   .btn:hover{box-shadow:0 0 0 3px color-mix(in oklab, var(--btn-border) 40%, transparent)}
-  .btn:active{transform:translateY(1px)}
-  .btn:focus-visible{outline:none; box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 60%, transparent)}
-  .badge{padding:6px 10px; border-radius:999px; border:1px solid var(--badge-border); background:var(--badge-bg); color:var(--badge-fg)}
-  .badge:focus-within{box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 60%, transparent)}
-  .row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center}
-  .sep{width:1px; height:20px; background:var(--border)}
-  canvas{max-width:100%; height:auto; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.35); background:#121212; cursor:default}
-  .hint{opacity:.85; font-size:13px; margin-top:-6px}
+  .btn-primary{
+    background:linear-gradient(180deg, #2563eb, #1e40af);
+    border-color:#1d4ed8; color:#fff;
+  }
+  .btn-primary:hover{
+    box-shadow:0 0 0 3px color-mix(in oklab, #2563eb 35%, transparent);
+    filter:brightness(1.02);
+  }
+  .badge{padding:6px 10px; border-radius:999px; border:1px solid var(--badge-border); background:var(--badge-bg); color:var(--badge-fg); display:inline-flex; gap:8px; align-items:center}
+  .sep{width:1px; height:22px; background:var(--border)}
+  canvas{max-width:100%; height:auto; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.35); background:#111}
+  .toolbar .break{flex-basis:100%; height:0}
+  input[type="file"]{position:fixed; left:-99999px; top:-99999px; width:1px; height:1px; opacity:0; pointer-events:none}
+
+  /* Mini reset buttons */
+  .mini-reset{
+    margin-left:6px; padding:2px 8px; border-radius:8px;
+    border:1px solid var(--btn-border); background:var(--panel-2);
+    color:var(--fg); font-size:12px; line-height:1; cursor:pointer;
+  }
+  .mini-reset:hover{
+    box-shadow:0 0 0 3px color-mix(in oklab, var(--btn-border) 35%, transparent);
+    filter:brightness(1.02);
+  }
 
   /* Modal */
   .modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50}
@@ -60,78 +60,164 @@
   .modal header{display:flex; align-items:center; gap:10px; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--subtle)}
   .modal h3{margin:0; font-size:18px}
   .modal .content{padding:12px 16px; overflow:auto}
-  .modal footer{display:flex; justify-content:space-between; gap:8px; padding:12px 16px; border-top:1px solid var(--subtle); background:color-mix(in oklab, var(--panel) 85%, black 15%)}
-  .small{font-size:12px; opacity:.85}
-  .close{background:var(--btn-bg)!important; color:var(--btn-fg)!important; border:1px solid var(--btn-border)!important; padding:8px 12px!important; border-radius:10px!important; font-weight:600; cursor:pointer}
+  .modal .close{background:var(--btn-bg); color:var(--btn-fg); border:1px solid var(--btn-border); padding:8px 12px; border-radius:10px; cursor:pointer}
 
-  /* Choose Map layout */
-  .choose-layout{display:grid; grid-template-columns: minmax(280px, 360px) 1fr; gap:14px}
-  .preset-grid{display:grid; grid-template-columns: 1fr; gap:10px}
-  .preset-card{display:flex; gap:10px; padding:10px; border:1px solid var(--border); border-radius:10px; background:var(--panel-2); align-items:center; cursor:pointer}
-  .preset-card[aria-selected="true"]{outline:3px solid color-mix(in oklab, var(--accent) 45%, transparent)}
-  .preset-thumb{width:96px; height:54px; border-radius:8px; border:1px solid var(--subtle); overflow:hidden; background:#000}
-  .preset-thumb img{width:100%; height:100%; object-fit:cover; display:block}
-  .preset-meta{display:flex; flex-direction:column; gap:4px}
-  .preset-title{font-weight:700}
-  .choose-preview{border:1px solid var(--border); border-radius:12px; padding:10px; background:var(--panel-2); display:flex; flex-direction:column; gap:10px; min-height:400px}
-  .choose-preview .big{width:100%; height:min(58vh,680px); border:1px solid var(--subtle); border-radius:10px; background:#000; overflow:hidden; display:flex; align-items:center; justify-content:center}
-  .choose-preview .big img{width:100%; height:100%; object-fit:contain; display:block; background:#000}
-  .choose-preview .row{justify-content:space-between}
+  /* Tables in modals */
+  .cm-head,.et-head{display:grid; gap:8px; padding:10px 12px; font-weight:700; background:var(--panel-2); border:1px solid var(--border); border-radius:10px}
+  .cm-row,.et-row{display:grid; gap:8px; align-items:center; padding:10px 12px; background:var(--panel); border:1px solid var(--subtle); border-radius:10px}
+  .cm-scroll,.et-body{display:flex; flex-direction:column; gap:8px; max-height:60vh; overflow:auto; padding-right:4px}
+  .cm-input,.et-input{width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--input-border); background:var(--input-bg); color:var(--input-fg)}
+  .cm-actions{display:flex; gap:6px; flex-wrap:wrap}
+  .cm-icon{padding:6px 10px; border-radius:8px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer; font-size:12px}
 
-  /* Manage Camps / Edit Data (gekürzt – gleich wie vorher) */
-  .cm-table{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--panel)}
-  .cm-scroll{max-height:min(56vh,620px); overflow:auto; position:relative; scrollbar-gutter:stable}
-  .cm-head,.cm-row{display:grid; grid-template-columns: var(--cm-col-idx) var(--cm-col-name) var(--cm-col-color) var(--cm-col-tint) var(--cm-col-stance) var(--cm-col-actions) var(--cm-col-info); align-items:center}
-  .cm-head{position:sticky; top:0; z-index:1; background:var(--panel-2); font-weight:600; border-bottom:1px solid var(--subtle)}
-  .cm-head>div,.cm-row>div{padding:10px 12px; border-right:1px solid var(--subtle)}
-  .cm-head>div:last-child,.cm-row>div:last-child{border-right:none}
-  .cm-row{border-top:1px solid var(--subtle)}
-  body[data-theme="dark"] .cm-row:nth-child(odd){background:color-mix(in oklab, var(--panel) 88%, white 12%)}
-  body[data-theme="dark"] .cm-row:nth-child(even){background:color-mix(in oklab, var(--panel) 82%, white 18%)}
-  .cm-input{width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--input-border); background:var(--input-bg); color:var(--input-fg)}
-  .cm-actions{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center}
-  .cm-icon{padding:8px 12px; border-radius:10px; border:1px solid var(--btn-border); background:var(--btn-bg); color:var(--btn-fg); cursor:pointer; font-weight:600}
-  .cm-actions .cm-icon[data-act="del"]{background:#8a2b2b; border-color:#8a2b2b; color:#fff}
-
-  .et-table{border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--panel)}
-  .et-body{max-height:min(56vh,620px); overflow:auto; position:relative; scrollbar-gutter:stable}
-  .et-head,.et-row{display:grid; grid-template-columns: var(--col-kd) var(--col-pow) var(--col-kp) var(--col-order) var(--col-actions); align-items:center}
-  .et-head{position:sticky; top:0; z-index:1; background:var(--panel-2); font-weight:600; border-bottom:1px solid var(--subtle)}
-  .et-head>div,.et-row>div{padding:8px 10px; border-right:1px solid var(--subtle)}
-  .et-head>div:last-child,.et-row>div:last-child{border-right:none}
-  .et-row{border-top:1px solid var(--subtle)}
-  body[data-theme="dark"] .et-row:nth-child(odd){background:color-mix(in oklab, var(--panel) 88%, white 12%)}
-  body[data-theme="dark"] .et-row:nth-child(even){background:color-mix(in oklab, var(--panel) 82%, white 18%)}
-  .et-input{width:100%; padding:8px 10px; border:1px solid var(--input-border); border-radius:8px; background:var(--input-bg); color:var(--input-fg)}
-  .et-input.invalid{border-color:#d32f2f; box-shadow:0 0 0 3px color-mix(in oklab, #d32f2f 25%, transparent)}
-
-  /* Copyright (Seite) */
-  .site-copyright{
-    position:fixed; right:14px; bottom:12px;
-    padding:6px 10px; border-radius:10px;
-    border:1px solid var(--border);
-    background: color-mix(in oklab, var(--panel) 88%, black 12%);
-    color: var(--fg); font-size:12px; opacity:.9;
-    z-index:1000; user-select:text; -webkit-user-select:text;
-    backdrop-filter: blur(2px);
+  /* Light mode: schärfere Buttons/Eingaben (global) */
+  body[data-theme="light"] .btn,
+  body[data-theme="light"] .cm-icon,
+  body[data-theme="light"] .close{
+    background: var(--btn-bg) !important;
+    color: var(--btn-fg) !important;
+    border: 1px solid var(--btn-border) !important;
+    text-shadow: none;
   }
-  body[data-theme="light"] .site-copyright{ background: color-mix(in oklab, var(--panel) 88%, white 12%); }
+  .btn:hover, .cm-icon:hover, .close:hover{
+    filter: brightness(1.03);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--btn-border) 35%, transparent);
+  }
+  .btn:focus-visible, .cm-icon:focus-visible, .close:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, #2563eb 45%, transparent);
+  }
+  .cm-head,.et-head{
+    background: var(--panel-2);
+    border-color: var(--btn-border);
+  }
+  .cm-row,.et-row{
+    background: var(--panel);
+    border-color: color-mix(in oklab, var(--btn-border) 60%, transparent);
+  }
+  body[data-theme="light"] .cm-input,
+  body[data-theme="light"] .et-input{
+    background: var(--input-bg);
+    color: var(--input-fg);
+    border: 1px solid color-mix(in oklab, var(--btn-border) 55%, transparent);
+  }
+  body[data-theme="light"] .cm-input:focus,
+  body[data-theme="light"] .et-input:focus{
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 3px color-mix(in oklab, #1d4ed8 35%, transparent);
+    outline: none;
+  }
+
+  /* --- Light Mode: HELLE Order/Actions Buttons in Tabellen --- */
+  body[data-theme="light"] .et-row .cm-actions .cm-icon,
+  body[data-theme="light"] .cm-row .cm-actions .cm-icon{
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(0,0,0,.02);
+  }
+  body[data-theme="light"] .et-row .cm-actions .cm-icon:hover,
+  body[data-theme="light"] .cm-row .cm-actions .cm-icon:hover{
+    background: #f8fafc !important;
+    border-color: #b6c2d1 !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+  }
+  body[data-theme="light"] .et-row .cm-actions .cm-icon:active,
+  body[data-theme="light"] .cm-row .cm-actions .cm-icon:active{
+    background: #f1f5f9 !important;
+    transform: translateY(0.5px);
+  }
+  /* Dezent hinterlegte Actions-Zelle */
+  body[data-theme="light"] .et-row .cm-actions,
+  body[data-theme="light"] .cm-row .cm-actions{
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4px;
+  }
+
+  /* ===== Choose Map ===== */
+  .choose-layout{ display:grid; grid-template-columns: 1.7fr 1fr; gap:24px; }
+  @media (max-width:1100px){ .choose-layout{ grid-template-columns:1fr } }
+  .choose-toolbar{ position:sticky; top:0; z-index:1; background:var(--panel); padding-bottom:10px; margin-bottom:10px; }
+  .search-badge{ margin-bottom:10px; }
+  .filterbar{ display:flex; gap:8px; flex-wrap:wrap; }
+  .filterpill{ padding:6px 10px; border-radius:999px; cursor:pointer; border:1px solid var(--badge-border); background:var(--badge-bg); color:var(--badge-fg); }
+  .filterpill.active{ border-color:#ffbf2e; box-shadow:0 0 0 3px color-mix(in oklab, #ffbf2e 40%, transparent); }
+  .gallery{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px }
+  @media (max-width:1400px){ .gallery{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
+  @media (max-width:900px){ .gallery{ grid-template-columns:1fr } }
+
+  .card{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--panel-2); cursor:pointer; transition:transform .12s, box-shadow .12s, border-color .12s; }
+  .card:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,.25) }
+  .card.selected{ border-color:#ffbf2e; box-shadow:0 0 0 3px color-mix(in oklab, #ffbf2e 45%, transparent) }
+
+  .thumb{ width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:#000; filter:saturate(1.05) contrast(1.02); }
+  .preview-pane .thumb{ object-fit:contain !important; aspect-ratio:auto; max-height:48vh; width:100%; background:#0b0e13; border:1px solid var(--border); border-radius:10px; }
+
+  .card-body{ padding:10px 12px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; min-width:0; }
+  .card-title{ font-weight:700; font-size:14px; line-height:1.25; margin-bottom:4px; display:block; white-space:normal; overflow:visible; text-overflow:clip; }
+  .card-sub, .preview-sub{ font-size:12px; opacity:.9; white-space:normal; overflow:visible; text-overflow:clip; word-break:break-word; }
+  .pill{ border:1px solid var(--badge-border); background:linear-gradient(180deg, color-mix(in oklab, var(--badge-bg) 85%, transparent), var(--panel)); color:var(--badge-fg); padding:6px 10px; border-radius:999px; font-size:12px; display:inline-flex; align-items:center; gap:6px; white-space:nowrap; overflow:visible; text-overflow:clip; max-width:none; flex:0 0 auto; }
+  .pill .dot{ width:8px; height:8px; border-radius:50%; background:#ffbf2e; box-shadow:0 0 0 2px color-mix(in oklab, #ffbf2e 35%, transparent) }
+
+  .preview-pane{ border:1px solid var(--border); border-radius:14px; padding:12px; background:var(--panel-2); position:sticky; top:8px }
+  .preview-title{ font-weight:800; font-size:16px; margin-top:10px }
+  .preview-meta{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:8px }
+
+  /* Upload modal layout */
+  .upload-body{ display:flex; flex-direction:column; gap:12px; }
+  .upload-option{ display:flex; gap:12px; align-items:flex-start; border:1px solid var(--border); border-radius:12px; background:var(--panel-2); padding:12px; cursor:pointer; }
+  .upload-option input[type="radio"]{ margin-top:4px; }
+  .upload-option .opt-content{ flex:1; display:flex; flex-direction:column; gap:8px }
+  .upload-inline{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+  .upload-footer{ display:flex; justify-content:flex-end; gap:10px; padding:12px 16px; border-top:1px solid var(--subtle); background:var(--panel); }
+
+  /* Page copyright (not on the canvas) */
+  .copyright-badge{
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 60;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--fg);
+    opacity: .85;
+    user-select: none;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body data-theme="dark">
-  <div class="toolbar row">
+  <div class="toolbar">
     <button id="openChoose" class="btn">Choose Map…</button>
     <button id="openUpload" class="btn">Upload Image…</button>
     <select id="mode" class="badge">
       <option value="dark" selected>Dark Mode</option>
       <option value="light">Light Mode</option>
     </select>
-    <span class="badge">Transparency: <input id="alpha" type="range" min="0.30" max="0.95" step="0.01" value="0.70"></span>
-    <span class="badge">Panel Size: <input id="psize" type="range" min="0.60" max="1.60" step="0.01" value="0.60"></span>
-    <span class="badge">Map Scale: <input id="mapScale" type="range" min="0.80" max="1.40" step="0.01" value="1.00"></span>
-    <span class="badge">Map Preset:
+
+    <span class="badge">Transparency
+      <input id="alpha" type="range" min="0.10" max="0.95" step="0.01" value="0.70">
+      <button id="resetAlpha" class="mini-reset" title="Reset to 0.70">↺</button>
+    </span>
+
+    <span class="badge">Panel Size
+      <input id="psize" type="range" min="0.45" max="1.60" step="0.01" value="0.75">
+      <button id="resetPsize" class="mini-reset" title="Reset to 0.75">↺</button>
+    </span>
+
+    <span class="badge">Map Scale
+      <input id="mapScale" type="range" min="0.80" max="1.40" step="0.01" value="1.00">
+      <button id="resetMscale" class="mini-reset" title="Reset to 1.00">↺</button>
+    </span>
+
+    <span class="badge">Preset
       <select id="preset">
-        <option value="custom">Custom (keep current)</option>
+        <option value="custom">Custom (keep)</option>
         <option value="orleans6">Siege of Orléans (6)</option>
         <option value="heroic4" selected>Heroic Anthem (4)</option>
         <option value="warriors6">Warriors Unbound (6)</option>
@@ -143,7 +229,8 @@
         <option value="song4">Song of Troy (4)</option>
       </select>
     </span>
-    <span class="badge">Title: <input id="titleText" type="text" value="Heroic Anthem" style="width:220px"></span>
+
+    <span class="badge">Title <input id="titleText" type="text" value="Rise of Kingdoms Kvk Map Overlay" style="width:260px"></span>
     <span class="sep"></span>
     <button id="openCampMgr" class="btn">Manage Camps</button>
     <button id="openData" class="btn">Edit Data</button>
@@ -152,210 +239,248 @@
     <span class="sep"></span>
     <button id="toggleDrag" class="btn">Drag: OFF</button>
     <button id="downloadPng" class="btn">Download PNG</button>
+    <span class="break"></span>
+    <button id="shareUrl" class="btn">Share Map</button>
+    <button id="exportJson" class="btn">Export JSON</button>
+    <button id="exportClipboard" class="btn">Export Clipboard</button>
+    <button id="importJson" class="btn">Import JSON</button>
+    <button id="importClipboard" class="btn">Import Clipboard</button>
   </div>
 
-  <div class="hint">Upload: Choose <b>Attach to Preset</b> or <b>Build Custom (4/6)</b>, then <b>Pick image…</b>.</div>
   <canvas id="cv" width="1600" height="900"></canvas>
 
-  <div class="site-copyright">© <span id="cpYear"></span> — Vinc69cmAløT#2359</div>
-
-  <!-- Choose Map Modal -->
-  <div id="chooseMapWrap" class="modal-backdrop" aria-hidden="true">
-    <div class="modal">
+  <!-- Choose Map -->
+  <div class="modal-backdrop" id="chooseMapWrap" aria-hidden="true">
+    <div class="modal" style="width:min(1280px,96vw); max-height:94vh">
       <header>
-        <h3>Choose Map</h3>
-        <div class="row">
-          <button id="useSelected" class="btn">Use Selected</button>
+        <h3 style="font-weight:800; letter-spacing:.2px">Choose Map</h3>
+        <div>
+          <button id="useSelected" class="btn btn-primary">Use Selected</button>
           <button id="closeChooseMap" class="close">Close</button>
         </div>
       </header>
       <div class="content">
         <div class="choose-layout">
-          <div><div class="preset-grid" id="presetGrid"></div></div>
-          <div class="choose-preview">
-            <div class="row">
-              <div id="chooseLabel" class="preset-title">—</div>
-              <div class="small" id="chooseMeta">Preview</div>
+          <div>
+            <div class="choose-toolbar">
+              <div class="search-badge badge" style="width:100%; gap:8px">
+                <input id="searchPreset" type="text" placeholder="Search…" style="flex:1; border:none; background:transparent; color:inherit; outline:none"/>
+              </div>
+              <div class="filterbar">
+                <button class="filterpill" data-filter="all">All</button>
+                <button class="filterpill" data-filter="4">4 camps</button>
+                <button class="filterpill" data-filter="6">6 camps</button>
+              </div>
             </div>
-            <div class="big"><img id="chooseImg" alt="Map preview"></div>
+            <div id="presetCards" class="gallery"></div>
+          </div>
+          <div class="preview-pane">
+            <img id="chooseImg" alt="Map preview" class="thumb"/>
+            <div class="preview-title" id="chooseLabel"></div>
+            <div class="preview-sub" id="chooseCamps"></div>
+            <div class="preview-meta">
+              <span id="chooseShort" class="small"></span>
+              <span id="chooseCount" class="pill"><span class="dot"></span><span class="cntText">— camps</span></span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Upload Modal -->
+  <!-- Upload -->
   <div id="uploadWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal" style="max-width:720px">
       <header>
-        <h3>Upload Image — Choose Usage</h3>
+        <h3>Upload Image</h3>
         <button id="closeUpload" class="close">Close</button>
       </header>
-      <div class="content" style="display:flex;flex-direction:column;gap:12px">
-        <div class="choose-opt">
+      <div class="content upload-body">
+        <label class="upload-option">
           <input type="radio" name="uplChoice" id="optPreset" checked>
-          <div>
-            <div class="opt-title">Attach to preset</div>
-            <div class="opt-sub">Use the image with an existing map (keeps camp names & positions)</div>
-            <div style="margin-top:8px">
-              <select id="uplPresetSelect" style="padding:6px 10px;border-radius:8px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--input-fg)"></select>
+          <div class="opt-content">
+            <div><b>Attach to preset</b><br><small>Use your image with an existing map preset.</small></div>
+            <div class="upload-inline">
+              <span class="small">Preset:</span>
+              <select id="uplPresetSelect"></select>
             </div>
           </div>
-        </div>
-        <div class="choose-opt">
+        </label>
+        <label class="upload-option">
           <input type="radio" name="uplChoice" id="optCustom">
-          <div>
-            <div class="opt-title">Build Custom Map</div>
-            <div class="opt-sub">Create a new 4- or 6-camp layout for the uploaded image</div>
-            <div style="margin-top:8px">
-              <select id="uplCustomCount" style="padding:6px 10px;border-radius:8px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--input-fg)">
-                <option value="4" selected>4 Camps</option>
-                <option value="6">6 Camps</option>
+          <div class="opt-content">
+            <div><b>Build custom map</b><br><small>Create a new 4- or 6-camp layout.</small></div>
+            <div class="upload-inline">
+              <span class="small">Camp count:</span>
+              <select id="uplCustomCount">
+                <option value="4" selected>4 camps</option>
+                <option value="6">6 camps</option>
               </select>
             </div>
           </div>
-        </div>
+        </label>
       </div>
-      <footer><div class="row" style="margin-left:auto"><button id="pickImage" class="btn">Pick image…</button></div></footer>
+      <footer class="upload-footer">
+        <button id="pickImage" class="btn btn-primary">Pick image…</button>
+        <button id="closeUploadFooter" class="btn">Cancel</button>
+      </footer>
     </div>
   </div>
 
-  <!-- Manage Camps Modal -->
+  <!-- Manage Camps -->
   <div id="campMgrWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal">
       <header>
         <h3>Manage Camps</h3>
-        <div class="row">
+        <div>
           <button id="addCamp" class="btn">Add Camp</button>
-          <button id="saveCampMgr" class="btn">Save</button>
+          <button id="saveCampMgr" class="btn btn-primary">Save</button>
           <button id="closeCampMgr" class="close">Close</button>
         </div>
       </header>
       <div class="content">
-        <div class="cm-table">
-          <div class="cm-head">
-            <div>#</div><div>Name</div><div>Color</div><div>Total Tint</div><div>Stance</div><div>Actions</div><div>Info</div>
-          </div>
-          <div id="cmBody" class="cm-scroll"></div>
+        <div class="cm-head" style="grid-template-columns:42px 1fr 140px 120px 160px 160px 200px">
+          <div>#</div><div>Name</div><div>Color</div><div>Total Tint</div><div>Stance</div><div>Actions</div><div>Info</div>
         </div>
+        <div id="cmBody" class="cm-scroll"></div>
       </div>
     </div>
   </div>
 
-  <!-- Edit Data Modal -->
+  <!-- Edit Data -->
   <div id="editorWrap" class="modal-backdrop" aria-hidden="true">
     <div class="modal">
       <header>
         <h3>Edit Data</h3>
-        <div class="row">
+        <div>
           <select id="campSelect" class="badge"></select>
           <button id="addRow" class="btn">Add Row</button>
           <button id="resetCamp" class="btn">Clear Camp</button>
-          <button id="applyData" class="btn">Apply</button>
-          <button id="saveData" class="btn">Save</button>
-          <button id="loadData" class="btn">Load</button>
-          <button id="exportData" class="btn">Export</button>
-          <button id="importData" class="btn">Import</button>
+          <button id="applyData" class="btn btn-primary">Apply</button>
           <button id="cancelData" class="close">Close</button>
         </div>
       </header>
       <div class="content">
-        <div class="et-table">
-          <div class="et-head">
-            <div>KD</div><div>Power</div><div>KP</div><div>Order</div><div>Actions</div>
-          </div>
-          <div id="rowsBody" class="et-body"></div>
+        <div class="et-head" style="grid-template-columns:140px 160px 160px 110px 110px">
+          <div>KD</div><div>Power</div><div>KP</div><div>Order</div><div>Actions</div>
         </div>
+        <div id="rowsBody" class="et-body"></div>
       </div>
     </div>
   </div>
 
-  <input id="fileInput" type="file" accept="image/*" style="display:none"/>
+  <!-- Page copyright (not on the canvas) -->
+  <div class="copyright-badge">
+    © <span id="crYear"></span> Vinc69cmAløT#2359
+  </div>
 
 <script>
-/* ====== DOM + STATE ====== */
-const DATA_KEY="siege_overlay_state_v18e";
-const PWIDTH0=0.28, PHEIGHT0=0.18;
-const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
-const fileInput=document.getElementById("fileInput");
+/* ===== DOM ===== */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+const modeSel = document.getElementById("mode");
+const alphaInput = document.getElementById("alpha");
+const panelSizeInput = document.getElementById("psize");
+const mapScaleInput = document.getElementById("mapScale");
+const titleInput = document.getElementById("titleText");
+const presetSel = document.getElementById("preset");
+const dlBtn = document.getElementById("downloadPng");
+const toggleDragBtn = document.getElementById("toggleDrag");
+const resetAllPosBtn = document.getElementById("resetAllPos");
+const toggleSummaryBtn = document.getElementById("toggleSummary");
+const shareBtn = document.getElementById("shareUrl");
+const exportBtn = document.getElementById("exportJson");
+const exportClipboardBtn = document.getElementById("exportClipboard");
+const importBtn = document.getElementById("importJson");
+const importClipboardBtn = document.getElementById("importClipboard");
+const chooseBtn = document.getElementById("openChoose");
+const chooseMapWrap = document.getElementById("chooseMapWrap");
+const closeChooseMapBtn = document.getElementById("closeChooseMap");
+const presetCards = document.getElementById("presetCards");
+const chooseImg = document.getElementById("chooseImg");
+const chooseLabel = document.getElementById("chooseLabel");
+const chooseCamps = document.getElementById("chooseCamps");
+const chooseShort = document.getElementById("chooseShort");
+const chooseCount = document.getElementById("chooseCount");
+const useSelectedBtn = document.getElementById("useSelected");
+const searchPreset = document.getElementById("searchPreset");
+const uploadBtn = document.getElementById("openUpload");
+const uploadWrap = document.getElementById("uploadWrap");
+const closeUploadBtn = document.getElementById("closeUpload");
+const uplPresetSelect = document.getElementById("uplPresetSelect");
+const optPreset = document.getElementById("optPreset");
+const optCustom = document.getElementById("optCustom");
+const uplCustomCount = document.getElementById("uplCustomCount");
+const pickImageBtn = document.getElementById("pickImage");
+const campMgrWrap = document.getElementById("campMgrWrap");
+const cmBody = document.getElementById("cmBody");
+const addCampBtn = document.getElementById("addCamp");
+const saveCampMgrBtn = document.getElementById("saveCampMgr");
+const closeCampMgrBtn = document.getElementById("closeCampMgr");
+const editorWrap = document.getElementById("editorWrap");
+const campSelect = document.getElementById("campSelect");
+const rowsBody = document.getElementById("rowsBody");
+const addRowBtn = document.getElementById("addRow");
+const resetCampBtn = document.getElementById("resetCamp");
+const applyDataBtn = document.getElementById("applyData");
+const cancelDataBtn = document.getElementById("cancelData");
+/* Mini reset buttons */
+const resetPsizeBtn  = document.getElementById("resetPsize");
+const resetMscaleBtn = document.getElementById("resetMscale");
+const resetAlphaBtn  = document.getElementById("resetAlpha");
 
-const modeSel=document.getElementById("mode");
-const alphaInput=document.getElementById("alpha");
-const panelSizeInput=document.getElementById("psize");
-const mapScaleInput=document.getElementById("mapScale");
-const titleInput=document.getElementById("titleText");
-const presetSel=document.getElementById("preset");
-const dlBtn=document.getElementById("downloadPng");
-const toggleDragBtn=document.getElementById("toggleDrag");
-const resetAllPosBtn=document.getElementById("resetAllPos");
-const toggleSummaryBtn=document.getElementById("toggleSummary");
+/* ===== kleine Helpers für Modal-Close ===== */
+function isOpen(el){ return el && el.style.display === "flex"; }
+function closeIfOpen(el, closer){ if(isOpen(el)){ closer(); return true; } return false; }
 
-const chooseBtn=document.getElementById("openChoose");
-const chooseMapWrap=document.getElementById("chooseMapWrap");
-const closeChooseMapBtn=document.getElementById("closeChooseMap");
-const presetGrid=document.getElementById("presetGrid");
-const chooseImg=document.getElementById("chooseImg");
-const chooseLabel=document.getElementById("chooseLabel");
-const chooseMeta=document.getElementById("chooseMeta");
-const useSelectedBtn=document.getElementById("useSelected");
-
-const uploadBtn=document.getElementById("openUpload");
-const uploadWrap=document.getElementById("uploadWrap");
-const closeUploadBtn=document.getElementById("closeUpload");
-const uplPresetSelect=document.getElementById("uplPresetSelect");
-const optPreset=document.getElementById("optPreset");
-const optCustom=document.getElementById("optCustom");
-const uplCustomCount=document.getElementById("uplCustomCount");
-const pickImageBtn=document.getElementById("pickImage");
-
-const campMgrWrap=document.getElementById("campMgrWrap");
-const cmBody=document.getElementById("cmBody");
-const addCampBtn=document.getElementById("addCamp");
-const saveCampMgrBtn=document.getElementById("saveCampMgr");
-const editorWrap=document.getElementById("editorWrap");
-const campSelect=document.getElementById("campSelect");
-const rowsBody=document.getElementById("rowsBody");
-const addRowBtn=document.getElementById("addRow");
-const resetCampBtn=document.getElementById("resetCamp");
-const applyDataBtn=document.getElementById("applyData");
-const cancelDataBtn=document.getElementById("cancelData");
-const saveDataBtn=document.getElementById("saveData");
-const loadDataBtn=document.getElementById("loadData");
-const exportDataBtn=document.getElementById("exportData");
-const importDataBtn=document.getElementById("importData");
-
+/* ===== State ===== */
 let mapImg=null, dragOn=false;
-let camps=[], pos={};
+let camps=[], pos={};              // pos[campId]=[fx,fy]
 let summaryGroupPos=[0.50,0.50], lastSummaryGroupLayout=null, showSummary=true;
 let lastLayout=null, lastCampRects={};
-let currentEditorCampIndex=0;
-
-/* upload plan */
-let pendingUploadPlan=null;
 let selectedPresetKey=null;
+const PWIDTH0=0.28, PHEIGHT0=0.18;
+const SCHEMA_VERSION=2;
+const AUTOSAVE_KEY="rok_overlay_autosave_v2";
 
-/* ====== Utils ====== */
+/* ===== Utils ===== */
 const uid=()=> 'c_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
 const clamp=(a,l,h)=> Math.max(l,Math.min(h,a));
 const hexToRgb=hex=>{let m=String(hex||'').replace('#',''); if(m.length===3)m=m.split('').map(c=>c+c).join(''); const n=parseInt(m||'000000',16); return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}};
 const mix=(hex,other='#000',t=0.75)=>{const a=hexToRgb(hex),b=hexToRgb(other);const r=Math.round(a.r*(1-t)+b.r*t),g=Math.round(a.g*(1-t)+b.g*t),bl=Math.round(a.b*(1-t)+b.b*t);return'#'+[r,g,bl].map(v=>('0'+v.toString(16)).slice(-2)).join('')};
 const hexWithAlpha=(hex,a)=>{const{r,g,b}=hexToRgb(hex);return`rgba(${r},${g},${b},${a})`};
-const setFont=(px,w)=>{ctx.font=(w?w+" ":"")+px+"px Inter, Segoe UI, Arial, sans-serif"};
-function drawTextFit(text,cx,cy,maxW,px,weight,color){let s=px;setFont(s,weight);let m=ctx.measureText(text);while(m.width>maxW&&s>9){s-=1;setFont(s,weight);m=ctx.measureText(text)}ctx.fillStyle=color;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,cx,cy)}
+function drawTextFit(text,cx,cy,maxW,px,w,color){let s=px;ctx.font=(w?w+" ":"")+s+"px Inter, Segoe UI, Arial, sans-serif";let m=ctx.measureText(text);while(m.width>maxW&&s>9){s-=1;ctx.font=(w?w+" ":"")+s+"px Inter, Segoe UI, Arial, sans-serif";m=ctx.measureText(text)}ctx.fillStyle=color;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,cx,cy)}
 function normalizePowerStr(s){if(!s)return"";s=String(s).trim().replace(/\s+/g,"");if(/[0-9]\.[0-9]/.test(s)&&!/,[0-9]/.test(s))s=s.replace('.',',');if(/[bB]$/.test(s))s=s.replace(/[bB]$/,'B');else if(/[mM]$/.test(s))s=s.replace(/[mM]$/,'M');const u=/[BM]$/.test(s)?s.slice(-1):'';let core=u?s.slice(0,-1):s;if(core.includes(",")&&core.includes("."))core=core.replace(/\./g,"");return core+u}
 const validKD=s=>/^\d{1,6}$/.test(String(s).trim());
 function validBM(s){s=normalizePowerStr(s);if(!s)return false;const m=s.match(/^(\d+(?:[.,]\d+)?)\s*([BM])$/);if(!m)return false;const num=parseFloat(m[1].replace(',','.'));return!isNaN(num)&&num>=0}
 function parseToBillions(str){let s=String(str||'').trim();if(!s)return NaN;s=s.replace(/\s+/g,'');let u='B';if(/[bB]$/.test(s)){u='B';s=s.slice(0,-1)}else if(/[mM]$/.test(s)){u='M';s=s.slice(0,-1)}if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'');s=s.replace(',', '.');const v=parseFloat(s);if(isNaN(v))return NaN;return u==='M'?v/1000:v}
 const fmtB=v=> (v.toFixed(1)).replace('.',',')+'B';
 function withTotals(rows){let p=0,k=0;(rows||[]).forEach(r=>{const pv=parseToBillions(r[1]);if(!isNaN(pv))p+=pv;const kv=parseToBillions(r[2]);if(!isNaN(kv))k+=kv});return[...(rows||[]),["Total",fmtB(p),fmtB(k)]]}
-const getPresetTitleByKey=(key)=>{const labels={heroic4:"Heroic Anthem (4)",warriors6:"Warriors Unbound (6)",tide4:"Tide of Wars (4)",storm6:"Storm of Stratagems (6)",invictus6:"Alliance Invictus (6)",britain4:"King of all Britain (4)",keener6:"Keener Blades (6)",orleans6:"Siege of Orléans (6)",song4:"Song of Troy (4)"};return (labels[key]||key).replace(/\s*\(\d+\)\s*$/,'')};
-const getTotalTint=c=> document.body.dataset.theme==="light"?(c.totalTintLight||mix(c.color,"#fff",0.85)):(c.totalTint||mix(c.color,"#000",0.75));
+function idealTextOnBg(hex){const {r,g,b}=hexToRgb(hex); const L=c=>{c/=255; return (c<=0.03928)?(c/12.92):Math.pow((c+0.055)/1.055,2.4)}; const Y=0.2126*L(r)+0.7152*L(g)+0.0722*L(b); return (Y>0.5) ? "#0e1116" : "#ffffff";}
+const debounce=(fn,ms=300)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+const autoSave = debounce(()=>{try{const s=serializeState();s.ui=uiSnapshot();localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(s));}catch(e){}},250);
+const uiSnapshot=()=>({theme:document.body.dataset.theme,alpha:alphaInput?.value,psize:panelSizeInput?.value,mscale:mapScaleInput?.value,showSummary});
 
-/* ====== Preset images ====== */
+/* Panel Size Reset helper */
+function resetPanelSize() { panelSizeInput.value = "0.75"; }
+/* Map Scale Reset helper */
+function resetMapScale(){ mapScaleInput.value = "1.00"; }
+/* Transparency Reset helper */
+function resetAlpha(){ alphaInput.value = "0.70"; }
+
+/* Filename helpers */
+function safeName(s){
+  const t = (s || "Map").trim();
+  const cleaned = t.replace(/[^\p{L}\p{N}\s._-]/gu, "").replace(/\s+/g, "_");
+  return cleaned || "Map";
+}
+function nameWithTheme(base){
+  const theme = (document.body?.dataset?.theme === "light") ? "light" : "dark";
+  return `${base}_${theme}`;
+}
+
+/* ===== Presets & images ===== */
 const presetImages={heroic4:"ha.png",warriors6:"wu.png",tide4:"tides.png",storm6:"stratagems.png",invictus6:"ai.png",britain4:"kob.png",keener6:"kb.png",orleans6:"orleans.png",song4:"troy.png"};
-function loadMapForPreset(key){const src=presetImages[key]; if(!src) return; const img=new Image(); img.onload=()=>{mapImg=img;draw()}; img.src=src}
-
-/* ====== Presets ====== */
+const getPresetTitleByKey=(key)=>{const L={heroic4:"Heroic Anthem (4)",warriors6:"Warriors Unbound (6)",tide4:"Tide of Wars (4)",storm6:"Storm of Stratagems (6)",invictus6:"Alliance Invictus (6)",britain4:"King of all Britain (4)",keener6:"Keener Blades (6)",orleans6:"Siege of Orléans (6)",song4:"Song of Troy (4)"};return (L[key]||key).replace(/\s*\(\d+\)\s*$/,'')};
 const mapPresets={
   orleans6:{camps:[
     {name:"Brittany",color:"#BDBDBD",pos:[0.18,0.12]},
@@ -418,162 +543,415 @@ const mapPresets={
   song4:{camps:[
     {name:"Aeolia",color:"#3B82F6",pos:[0.24,0.34]},
     {name:"Dardania",color:"#EF4444",pos:[0.81,0.14]},
-    {name:"Mycenae",color:"#F59E3B",pos:[0.26,0.78]},
+    {name:"Mycenae",color:"#F59E0B",pos:[0.26,0.78]},
     {name:"Lycia",color:"#FFCA28",pos:[0.83,0.78]},
   ]},
 };
+const presetMeta=[
+  { key:"heroic4",   sk:"HA",         label:"Heroic Anthem (4)",        img:"ha.png",         count:4 },
+  { key:"warriors6", sk:"WU",         label:"Warriors Unbound (6)",     img:"wu.png",         count:6 },
+  { key:"tide4",     sk:"Tides",      label:"Tide of Wars (4)",         img:"tides.png",      count:4 },
+  { key:"storm6",    sk:"Stratagems", label:"Storm of Stratagems (6)",  img:"stratagems.png", count:6 },
+  { key:"invictus6", sk:"AI",         label:"Alliance Invictus (6)",    img:"ai.png",         count:6 },
+  { key:"britain4",  sk:"KoB",        label:"King of all Britain (4)",  img:"kob.png",        count:4 },
+  { key:"keener6",   sk:"KB",         label:"Keener Blades (6)",        img:"kb.png",         count:6 },
+  { key:"orleans6",  sk:"Orleans",    label:"Siege of Orléans (6)",     img:"orleans.png",    count:6 },
+  { key:"song4",     sk:"Troy",       label:"Song of Troy (4)",         img:"troy.png",       count:4 },
+];
+const getPresetTitleByKeyShort = key => (presetMeta.find(p=>p.key===key)?.label||key).replace(/\s*\(\d+\)\s*$/,'');
 
-/* ====== Helpers ====== */
+/* ===== Camps helpers ===== */
 function makeCamp(name,color,rows=[["","",""]],stance="neutral",tint=null){
   return{id:uid(),name,color,totalTint:tint||mix(color,"#000",0.75),stance,rows}
 }
-function applyPreset(key,keep=false){
-  const p=mapPresets[key]; if(!p) return;
-  const nameToRows={}, nameToStance={}, nameToTint={};
-  if(keep){camps.forEach(c=>{nameToRows[c.name]=(c.rows||[]).map(r=>[...r]); nameToStance[c.name]=c.stance; nameToTint[c.name]=c.totalTint||null;});}
-  pos={};
-  camps=p.camps.map(c=>{
-    const camp=makeCamp(c.name,c.color,nameToRows[c.name]||[["","",""]],nameToStance[c.name]||"neutral",nameToTint[c.name]||null);
-    pos[camp.id]=c.pos; return camp;
-  });
-  summaryGroupPos=[0.50,0.50];
-  draw();
+function hasCampContent(){
+  for (const c of camps){
+    for (const r of (c.rows||[])){
+      if ((r[0]&&r[0].trim()) || (r[1]&&r[1].trim()) || (r[2]&&r[2].trim())) return true;
+    }
+  }
+  return false;
 }
 
-/* ====== UI Bindings ====== */
-modeSel.onchange=()=>{document.body.dataset.theme=modeSel.value;draw()};
-document.body.dataset.theme="dark";
-[alphaInput,panelSizeInput,mapScaleInput,titleInput].forEach(el=> el.oninput=()=>draw());
-toggleSummaryBtn.onclick=()=>{showSummary=!showSummary;toggleSummaryBtn.textContent=`Summary: ${showSummary?"ON":"OFF"}`;draw()};
-resetAllPosBtn.onclick=()=>{const v=presetSel.value; if(v!=="custom"&&mapPresets[v]){titleInput.value=getPresetTitleByKey(v);applyPreset(v,true);loadMapForPreset(v);}else{draw()}};
-dlBtn.onclick=()=>{const a=document.createElement("a");a.download=`MapOverlay_${document.body.dataset.theme}.png`;a.href=cv.toDataURL("image/png");a.click()};
-presetSel.onchange=()=>{const v=presetSel.value;if(v==="custom")return;titleInput.value=getPresetTitleByKey(v);applyPreset(v,false);loadMapForPreset(v)};
+/* Preset anwenden */
+function applyPreset(key,keep=false){
+  const p=mapPresets[key]; if(!p) return;
+  const nameToRows={}, nameToStance={}, nameToTint={}, nameToPos={};
+  if(keep){
+    camps.forEach(c=>{
+      nameToRows[c.name]=(c.rows||[]).map(r=>[...r]);
+      nameToStance[c.name]=c.stance;
+      nameToTint[c.name]=c.totalTint||null;
+      if (pos[c.id]) nameToPos[c.name]=[...pos[c.id]];
+    });
+  }
+  pos={};
+  camps=p.camps.map(c=>{
+    const camp=makeCamp(
+      c.name, c.color,
+      keep && nameToRows[c.name] ? nameToRows[c.name] : [["","",""]],
+      keep && nameToStance[c.name] ? nameToStance[c.name] : "neutral",
+      keep && nameToTint[c.name] ? nameToTint[c.name] : null
+    );
+    pos[camp.id] = keep && nameToPos[c.name] ? nameToPos[c.name] : c.pos;
+    return camp;
+  });
+  summaryGroupPos=[0.50,0.50];
+  draw(); autoSave();
+}
 
-/* Drag toggle UI */
+/* ===== Share / Import / Export ===== */
+function sanitizeCamps(arr){
+  return (arr||[]).map(c=>{
+    const id=c.id||uid();
+    return { id, name:c.name||"Camp", color:c.color||"#999999",
+      totalTint:c.totalTint||mix(c.color||"#999","#000",0.75),
+      stance:c.stance||"neutral",
+      rows:Array.isArray(c.rows)?c.rows.map(r=>[r[0]||"",r[1]||"",r[2]||""]):[["","",""]] };
+  });
+}
+function serializeState(){
+  const outPos={}; camps.forEach(c=>{const p=pos[c.id]; if(Array.isArray(p)&&p.length===2){ outPos[c.id]=[clamp(p[0],0,1), clamp(p[1],0,1)]; }});
+  return {
+    schemaVersion: SCHEMA_VERSION,
+    mapKey:(presetSel?.value||"custom"),
+    mapLabel:getPresetTitleByKeyShort(presetSel?.value||"Custom"),
+    title:titleInput.value||"",
+    camps:(camps||[]).map(c=>({ id:c.id, name:c.name, color:c.color, totalTint:c.totalTint, stance:c.stance, rows:(c.rows||[]).map(r=>[r[0]||"",r[1]||"",r[2]||""]) })),
+    pos:outPos,
+    summaryPos:[clamp(summaryGroupPos[0],0,1),clamp(summaryGroupPos[1],0,1)]
+  };
+}
+function applyState(state){
+  let importedCamps, importedPos={}, importedSummary=[0.5,0.5];
+  if(Array.isArray(state)){importedCamps=state}
+  else if(state && Array.isArray(state.camps)){
+    importedCamps=state.camps;
+    if(state.pos&&typeof state.pos==="object") importedPos=state.pos;
+    if(Array.isArray(state.summaryPos)&&state.summaryPos.length===2) importedSummary=state.summaryPos;
+  } else { throw new Error("Invalid data format"); }
+  const cleaned=sanitizeCamps(importedCamps);
+  const newPos={}, currentNameToPos={};
+  camps.forEach(c=>{if(pos[c.id]) currentNameToPos[c.name.toLowerCase()]=pos[c.id]});
+  cleaned.forEach(c=>{
+    if(importedPos[c.id]){ newPos[c.id]=importedPos[c.id]; return; }
+    if(currentNameToPos[c.name.toLowerCase()]){ newPos[c.id]=currentNameToPos[c.name.toLowerCase()]; return; }
+    newPos[c.id]=[0.5,0.5];
+  });
+  camps=cleaned; pos=newPos; summaryGroupPos=[clamp(importedSummary[0],0,1),clamp(importedSummary[1],0,1)];
+}
+function migrateToV2(obj){
+  if (!obj.schemaVersion) obj.schemaVersion=1;
+  if (!obj.title) obj.title = obj.mapLabel || "Map";
+  if (!obj.pos) obj.pos = {};
+  if (!obj.summaryPos) obj.summaryPos=[0.5,0.5];
+  if (!obj.camps) obj.camps=[];
+  obj.camps.forEach(c=>{
+    if (!Array.isArray(c.rows)) c.rows=[["","",""]];
+    c.rows=c.rows.map(r=>[r?.[0]||"", r?.[1]||"", r?.[2]||""]);
+    c.stance=c.stance||"neutral";
+    c.totalTint=c.totalTint||mix(c.color||"#999","#000",0.75);
+  });
+  obj.schemaVersion=2;
+  return obj;
+}
+function encodeStateToUrl(){
+  const state = serializeState();
+  state.ui = uiSnapshot();
+  const json = JSON.stringify(state);
+  const b64 = btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g,(_,p1)=>String.fromCharCode('0x'+p1)));
+  const url = new URL(window.location.href);
+  url.hash = "s=" + b64;
+  return url.toString();
+}
+function applyStateFromUrl(){
+  const h = window.location.hash || "";
+  const m = h.match(/s=([^&]+)/);
+  if(!m) return false;
+  try{
+    const json = decodeURIComponent(Array.prototype.map.call(atob(m[1]), c => '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    let state = JSON.parse(json);
+    if (!state.schemaVersion || state.schemaVersion < 2) state=migrateToV2(state);
+    if (state.mapKey && mapPresets[state.mapKey]) {
+      presetSel.value = state.mapKey;
+      titleInput.value = state.title || getPresetTitleByKeyShort(state.mapKey);
+      applyPreset(state.mapKey, false);
+      loadMapForPreset(state.mapKey);
+    } else {
+      presetSel.value = "custom";
+      titleInput.value = state.title || "Custom Map";
+    }
+    applyState(state);
+    if (state.ui){
+      if (state.ui.theme) { document.body.dataset.theme = state.ui.theme; modeSel.value = state.ui.theme; }
+      if (state.ui.alpha) alphaInput.value = state.ui.alpha;
+      if (state.ui.psize) panelSizeInput.value = state.ui.psize;
+      if (state.ui.mscale) mapScaleInput.value = state.ui.mscale;
+      if (typeof state.ui.showSummary === "boolean"){
+        showSummary = state.ui.showSummary;
+        toggleSummaryBtn.textContent = `Summary: ${showSummary?"ON":"OFF"}`;
+      }
+    }
+    draw(); autoSave(); return true;
+  }catch(e){ console.error(e); return false; }
+}
+
+/* ===== UI Bindings ===== */
+const triggerRedrawAndSave = ()=>{ draw(); autoSave(); };
+modeSel.onchange=()=>{document.body.dataset.theme=modeSel.value; triggerRedrawAndSave();};
+document.body.dataset.theme="dark";
+[alphaInput,panelSizeInput,mapScaleInput,titleInput].forEach(el=> el.oninput=triggerRedrawAndSave);
+toggleSummaryBtn.onclick=()=>{showSummary=!showSummary;toggleSummaryBtn.textContent=`Summary: ${showSummary?"ON":"OFF"}`; triggerRedrawAndSave();};
+
+/* Mini reset buttons bindings */
+resetPsizeBtn.onclick  = () => { resetPanelSize(); triggerRedrawAndSave(); };
+resetMscaleBtn.onclick = () => { resetMapScale();   triggerRedrawAndSave(); };
+resetAlphaBtn.onclick  = () => { resetAlpha();      triggerRedrawAndSave(); };
+
+/* Drag toggle */
 function syncDragBtn(){toggleDragBtn.textContent=`Drag: ${dragOn?"ON":"OFF"}`;toggleDragBtn.style.opacity=dragOn?"1":"0.7";cv.style.cursor=dragOn?"grab":"default"}
 syncDragBtn(); toggleDragBtn.onclick=()=>{dragOn=!dragOn;syncDragBtn()}
 
-/* ====== Choose Map Modal ====== */
-const presetMeta=[
-  { key:"heroic4",label:"Heroic Anthem (4)",img:"ha.png" },
-  { key:"warriors6",label:"Warriors Unbound (6)",img:"wu.png" },
-  { key:"tide4",label:"Tide of Wars (4)",img:"tides.png" },
-  { key:"storm6",label:"Storm of Stratagems (6)",img:"stratagems.png" },
-  { key:"invictus6",label:"Alliance Invictus (6)",img:"ai.png" },
-  { key:"britain4",label:"King of all Britain (4)",img:"kob.png" },
-  { key:"keener6",label:"Keener Blades (6)",img:"kb.png" },
-  { key:"orleans6",label:"Siege of Orléans (6)",img:"orleans.png" },
-  { key:"song4",label:"Song of Troy (4)",img:"troy.png" },
-];
-function openChooseMap(){
-  renderPresetList();
-  selectedPresetKey = presetSel.value && presetSel.value !== "custom" ? presetSel.value : "heroic4";
-  updateChoosePreview(selectedPresetKey);
-  markSelectedCard();
-  chooseMapWrap.style.display="flex";
-  chooseMapWrap.setAttribute("aria-hidden","false");
+/* Positionen-Reset (nur Positionen, Stances/Daten bleiben) */
+resetAllPosBtn.onclick = () => {
+  const key = presetSel.value;
+  summaryGroupPos = [0.50, 0.50];
+  if (key !== "custom" && mapPresets[key]) {
+    const defByName = {};
+    mapPresets[key].camps.forEach(d => { defByName[(d.name || "").toLowerCase()] = d.pos; });
+    camps.forEach(c => {
+      const def = defByName[(c.name || "").toLowerCase()];
+      pos[c.id] = def ? [...def] : [0.5, 0.5];
+    });
+  } else {
+    camps.forEach(c => { pos[c.id] = [0.5, 0.5]; });
+  }
+  draw(); autoSave();
+};
+
+/* Download PNG — Title + Mode */
+dlBtn.onclick = () => {
+  const base = safeName(titleInput.value || getPresetTitleByKeyShort(presetSel.value) || "Map");
+  const a = document.createElement("a");
+  a.download = `${nameWithTheme(base)}.png`;
+  a.href = cv.toDataURL("image/png");
+  a.click();
+};
+
+shareBtn.onclick=()=>{ const url=encodeStateToUrl(); navigator.clipboard?.writeText(url).then(()=>alert("Share Map link copied!")).catch(()=>{ prompt("Copy this map link:", url); }); };
+
+/* Preset-Wechsel mit Nachfrage (Dropdown) */
+presetSel.onchange=()=>{
+  const key=presetSel.value; if(key==="custom") return;
+  const name=getPresetTitleByKeyShort(key);
+  let keep=false;
+  if (hasCampContent()){
+    const ok=confirm(`Switch to "${name}". Reset old map (clear all camp data & positions)?\n\nOK = Reset\nCancel = Keep data & positions`);
+    keep=!ok;
+  }
+  titleInput.value=name;
+  resetPanelSize();                 // Panel Size auf Default 0.75
+  applyPreset(key, keep);
+  loadMapForPreset(key);
+  triggerRedrawAndSave();
+};
+
+/* Export/Import */
+exportBtn.onclick=()=>{
+  const state=serializeState(); state.ui = uiSnapshot(); state.shareUrl = encodeStateToUrl();
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  const base = safeName(state.title || getPresetTitleByKeyShort(state.mapKey) || "Map");
+  a.download = `${nameWithTheme(base)}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+};
+exportClipboardBtn.onclick=async()=>{
+  try{
+    const state=serializeState(); state.ui = uiSnapshot(); state.shareUrl = encodeStateToUrl();
+    await navigator.clipboard.writeText(JSON.stringify(state,null,2));
+    alert("JSON copied to clipboard.");
+  }catch{ prompt("Copy JSON:", JSON.stringify(serializeState(),null,2)); }
+};
+const importFile=document.createElement("input"); importFile.type="file"; importFile.accept="application/json";
+importBtn.onclick=()=>{ importFile.value=""; importFile.click(); };
+importFile.onchange=()=>{
+  const f=importFile.files[0]; if(!f) return; const reader=new FileReader();
+  reader.onload=()=>{ try{ let obj=JSON.parse(reader.result); if(!obj.schemaVersion||obj.schemaVersion<2) obj=migrateToV2(obj); doImport(obj); }catch{ alert("Import failed"); } };
+  reader.readAsText(f);
+};
+importClipboardBtn.onclick=async()=>{
+  try{ let obj=JSON.parse(await navigator.clipboard.readText()); if(!obj.schemaVersion||obj.schemaVersion<2) obj=migrateToV2(obj); doImport(obj); }
+  catch{ alert("Clipboard import failed"); }
+};
+function doImport(state){
+  let targetKey = state.mapKey || "custom";
+  if(targetKey!=="custom" && !mapPresets[targetKey]){ alert(`Unknown preset. Import as Custom.`); targetKey="custom"; }
+  if(targetKey!=="custom"){
+    const title = state.title || getPresetTitleByKeyShort(targetKey);
+    const change = confirm(`Switch to preset "${getPresetTitleByKeyShort(targetKey)}" and apply its default positions? (Keep your data/stances.)\n\nOK = switch preset\nCancel = import as Custom`);
+    if(change){ presetSel.value=targetKey; titleInput.value=title; applyPreset(targetKey,false); loadMapForPreset(targetKey); }
+    else { presetSel.value="custom"; titleInput.value = state.title || "Custom Map"; }
+  }else{ presetSel.value="custom"; titleInput.value = state.title || "Custom Map"; }
+  applyState(state);
+  const ui=state.ui||{};
+  if (ui.theme){ document.body.dataset.theme=ui.theme; modeSel.value=ui.theme; }
+  if (ui.alpha) alphaInput.value=ui.alpha;
+  if (ui.psize) panelSizeInput.value=ui.psize;
+  if (ui.mscale) mapScaleInput.value=ui.mscale;
+  if (typeof ui.showSummary==="boolean"){ showSummary=ui.showSummary; toggleSummaryBtn.textContent=`Summary: ${showSummary?"ON":"OFF"}`; }
+  triggerRedrawAndSave(); alert("Import successful.");
 }
-chooseBtn.onclick=openChooseMap;
-closeChooseMapBtn.onclick=()=>{chooseMapWrap.style.display="none"; chooseMapWrap.setAttribute("aria-hidden","true")};
-function renderPresetList(){
-  presetGrid.innerHTML="";
-  presetMeta.forEach(p=>{
-    const card=document.createElement("div"); card.className="preset-card"; card.dataset.key=p.key; card.tabIndex=0;
-    const thumb=document.createElement("div"); thumb.className="preset-thumb";
-    const im=document.createElement("img"); im.src=p.img; im.alt=p.label; thumb.appendChild(im);
-    const meta=document.createElement("div"); meta.className="preset-meta";
-    meta.innerHTML=`<div class="preset-title">${p.label}</div><div class="small">${p.key}</div>`;
-    card.appendChild(thumb); card.appendChild(meta);
-    card.onclick=()=>{selectedPresetKey=p.key; updateChoosePreview(p.key); markSelectedCard()};
-    card.onkeydown=(e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); card.click(); }};
-    presetGrid.appendChild(card);
+
+/* ===== Choose Map – Filter/Render ===== */
+let presetFilter = "all";
+function bindFilterPills(){
+  const pills = chooseMapWrap.querySelectorAll('.filterpill');
+  pills.forEach(b=>{
+    b.onclick = ()=>{
+      presetFilter = b.dataset.filter || "all";
+      pills.forEach(x=>x.classList.toggle('active', x===b));
+      renderPresetCards(searchPreset.value);
+    };
   });
+  const def = chooseMapWrap.querySelector('.filterpill[data-filter="all"]');
+  if(def) def.classList.add('active');
 }
-function markSelectedCard(){presetGrid.querySelectorAll(".preset-card").forEach(el=>{el.setAttribute("aria-selected", el.dataset.key===selectedPresetKey ? "true" : "false")})}
+function campLine(key){ const p=mapPresets[key]; if(!p||!Array.isArray(p.camps)) return ""; return p.camps.map(c=>c.name).join(" • "); }
+function renderPresetCards(filter=""){
+  const q=(filter||"").trim().toLowerCase();
+  presetCards.innerHTML="";
+  presetMeta
+    .filter(p=>{
+      const hit=!q || p.label.toLowerCase().includes(q) || (p.sk||"").toLowerCase().includes(q);
+      if(!hit) return false;
+      if(presetFilter==="4" && p.count!==4) return false;
+      if(presetFilter==="6" && p.count!==6) return false;
+      return true;
+    })
+    .forEach(p=>{
+      const label=p.label.replace(/\s*\(\d+\)\s*$/,'');
+      const campsOneLine=campLine(p.key);
+      const card=document.createElement("div");
+      card.className="card"; card.dataset.key=p.key; card.title=campsOneLine;
+      card.innerHTML=`
+        <img class="thumb" src="${p.img}" alt="${label}">
+        <div class="card-body">
+          <div style="min-width:0">
+            <div class="card-title" title="${label}">${label}</div>
+            <div class="card-sub" title="${campsOneLine}">${campsOneLine}</div>
+          </div>
+          <span class="pill"><span class="dot"></span><span>${p.count} camps</span></span>
+        </div>`;
+      card.onclick = ()=>{ selectedPresetKey=p.key; updateChoosePreview(p.key); highlightCard(p.key); };
+      card.ondblclick = ()=>{ quickUseSelected(); };
+      presetCards.appendChild(card);
+    });
+  highlightCard(selectedPresetKey);
+}
+function highlightCard(key){ presetCards.querySelectorAll(".card").forEach(c=> c.classList.toggle('selected', c.dataset.key===key)); }
 function updateChoosePreview(key){
   const meta=presetMeta.find(x=>x.key===key);
-  if(!meta){ chooseLabel.textContent="—"; chooseImg.removeAttribute("src"); return; }
-  chooseLabel.textContent=(meta.label||key).replace(/\s*\(\d+\)\s*$/,'');
-  chooseMeta.textContent = "Full map preview";
-  chooseImg.src = meta.img;
+  if(!meta){ chooseLabel.textContent="—"; chooseImg.removeAttribute("src"); chooseCamps.textContent=""; chooseShort.textContent=""; chooseCount.querySelector(".cntText").textContent="— camps"; return; }
+  chooseLabel.textContent=meta.label.replace(/\s*\(\d+\)\s*$/,'');
+  chooseCamps.textContent=campLine(meta.key);
+  chooseShort.textContent="Short: "+(meta.sk||"—");
+  chooseCount.querySelector(".cntText").textContent = meta.count+" camps";
+  chooseImg.src=meta.img;
 }
-useSelectedBtn.onclick=()=>{
+function openChooseMap(){
+  renderPresetCards();
+  selectedPresetKey = presetSel.value && presetSel.value!=="custom" ? presetSel.value : "heroic4";
+  updateChoosePreview(selectedPresetKey);
+  highlightCard(selectedPresetKey);
+  chooseMapWrap.style.display="flex"; chooseMapWrap.setAttribute("aria-hidden","false");
+  searchPreset.value=""; bindFilterPills();
+}
+chooseBtn.onclick=openChooseMap; closeChooseMapBtn.onclick=()=>{chooseMapWrap.style.display="none"; chooseMapWrap.setAttribute("aria-hidden","true")};
+useSelectedBtn.onclick=quickUseSelected;
+searchPreset.oninput=()=>{ renderPresetCards(searchPreset.value); highlightCard(selectedPresetKey); };
+function quickUseSelected(){
   if(!selectedPresetKey) return;
-  presetSel.value = selectedPresetKey;
-  titleInput.value = getPresetTitleByKey(selectedPresetKey);
-  applyPreset(selectedPresetKey,false);
-  loadMapForPreset(selectedPresetKey);
-  draw();
-  closeChooseMapBtn.click();
-};
-
-/* ====== Upload ====== */
-uploadBtn.onclick=()=>{
-  pendingUploadPlan=null;
-  uplPresetSelect.innerHTML=presetMeta.map(p=>{
-    const sel=(presetSel.value===p.key)?'selected':''; return `<option value="${p.key}" ${sel}>${p.label}</option>`;
-  }).join('');
-  optPreset.checked=true; optCustom.checked=false;
-  uploadWrap.style.display="flex"; uploadWrap.setAttribute("aria-hidden","false");
-};
-closeUploadBtn.onclick=()=>{uploadWrap.style.display="none"; uploadWrap.setAttribute("aria-hidden","true")};
-pickImageBtn.onclick=()=>{
-  if(optCustom.checked){ pendingUploadPlan={type:"custom",count:parseInt(uplCustomCount.value||"4",10)} }
-  else{ const key=uplPresetSelect.value; if(!mapPresets[key]) return alert("Please select a valid preset."); pendingUploadPlan={type:"preset",key} }
-  fileInput.value=""; if(typeof fileInput.showPicker==="function"){ try{fileInput.showPicker();return;}catch{} } fileInput.click();
-};
-fileInput.onchange=()=>{
-  const f=fileInput.files[0]; if(!f) return;
-  if(!pendingUploadPlan){alert("Please choose how to use the image first."); fileInput.value=""; return;}
-  const img=new Image();
-  img.onload=()=>{
-    mapImg=img;
-    if(pendingUploadPlan.type==="preset"){ const key=pendingUploadPlan.key; presetSel.value=key; titleInput.value=getPresetTitleByKey(key); applyPreset(key,false); }
-    else { buildCustomMap(pendingUploadPlan.count||4); }
-    pendingUploadPlan=null;
-    uploadWrap.style.display="none"; uploadWrap.setAttribute("aria-hidden","true");
-    draw();
-    fileInput.value="";
-  };
-  img.src=URL.createObjectURL(f);
-};
-
-/* ====== Manage Camps / Edit Data (Events) ====== */
-document.addEventListener("click",(ev)=>{
-  if(ev.target.id==="openCampMgr"){ev.preventDefault(); showCampMgr()}
-  if(ev.target.id==="closeCampMgr"){ev.preventDefault(); hideCampMgr()}
-});
-document.addEventListener("keydown",(ev)=>{
-  if(ev.key==="Escape"){
-    if(getComputedStyle(campMgrWrap).display!=="none") hideCampMgr();
-    if(getComputedStyle(chooseMapWrap).display!=="none") closeChooseMapBtn.click();
-    if(getComputedStyle(uploadWrap).display!=="none") closeUploadBtn.click();
+  const key = selectedPresetKey;
+  const name = getPresetTitleByKeyShort(key);
+  let keep=false;
+  if (hasCampContent()){
+    const ok=confirm(`Switch to "${name}". Reset old map (clear all camp data & positions)?\n\nOK = Reset\nCancel = Keep data & positions`);
+    keep=!ok;
   }
-});
-function showCampMgr(){
-  try{
-    if(!Array.isArray(camps)||camps.length===0){
-      const v=presetSel?.value||"heroic4";
-      applyPreset(mapPresets[v]?v:"heroic4",false);
-    }
-    renderCampMgr();
-    campMgrWrap.style.display="flex";
-    campMgrWrap.setAttribute("aria-hidden","false");
-  }catch(e){console.error(e)}
+  presetSel.value = key;
+  titleInput.value = name;
+  resetPanelSize();                   // Panel Size zurücksetzen
+  applyPreset(key, keep);
+  loadMapForPreset(key);
+  chooseMapWrap.style.display="none"; chooseMapWrap.setAttribute("aria-hidden","true");
+  triggerRedrawAndSave();
 }
-function hideCampMgr(){campMgrWrap.style.display="none";campMgrWrap.setAttribute("aria-hidden","true")}
+
+/* ===== Upload ===== */
+function populateUploadPresets(){
+  uplPresetSelect.innerHTML = presetMeta.map(p => `<option value="${p.key}">${p.label.replace(/\s*\(\d+\)\s*$/,'')}</option>`).join("");
+  uplPresetSelect.value = (presetSel.value && presetSel.value!=="custom") ? presetSel.value : "heroic4";
+}
+function openUploadModal(){ populateUploadPresets(); optPreset.checked = true; uploadWrap.style.display="flex"; uploadWrap.setAttribute("aria-hidden","false"); }
+function closeUploadModal(){ uploadWrap.style.display="none"; uploadWrap.setAttribute("aria-hidden","true"); }
+uploadBtn.onclick=openUploadModal; closeUploadBtn.onclick=closeUploadModal;
+document.getElementById("closeUploadFooter").onclick=closeUploadModal;
+function ensureHiddenPicker(){
+  if (window.__imgPicker) return window.__imgPicker;
+  const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*";
+  inp.style.position="fixed"; inp.style.left="-99999px"; inp.style.top="-99999px"; inp.style.width="1px"; inp.style.height="1px"; inp.style.opacity="0";
+  document.body.appendChild(inp); window.__imgPicker=inp; return inp;
+}
+const hiddenPicker=ensureHiddenPicker();
+pickImageBtn.onclick=(e)=>{ e.preventDefault(); hiddenPicker.value=""; hiddenPicker.click(); };
+hiddenPicker.onchange=()=>{
+  const file=hiddenPicker.files?.[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{ const img=new Image(); img.onload=()=>{
+    if (optPreset.checked){
+      const key=uplPresetSelect.value;
+      if (mapPresets[key]){
+        const name=getPresetTitleByKeyShort(key);
+        let keep=false;
+        if (hasCampContent()){
+          const ok=confirm(`Attach image to "${name}". Reset old map (clear all camp data & positions)?\n\nOK = Reset\nCancel = Keep data & positions`);
+          keep=!ok;
+        }
+        presetSel.value=key; titleInput.value=name; applyPreset(key, keep);
+        resetPanelSize();
+      } else {
+        buildCustomMap(4); presetSel.value="custom"; titleInput.value="Custom Map";
+        resetPanelSize();
+      }
+    }
+    if (optCustom.checked){
+      const count=parseInt(uplCustomCount.value||"4",10);
+      buildCustomMap(isNaN(count)?4:count); presetSel.value="custom"; titleInput.value="Custom Map";
+      resetPanelSize();
+    }
+    mapImg=img; draw(); autoSave(); closeUploadModal();
+  }; img.src=reader.result; };
+  reader.readAsDataURL(file);
+};
+
+/* ===== Manage Camps ===== */
+function showCampMgr(){ renderCampMgr(); campMgrWrap.style.display="flex"; campMgrWrap.setAttribute("aria-hidden","false"); }
+function hideCampMgr(){ saveCampMgr(); campMgrWrap.style.display="none"; campMgrWrap.setAttribute("aria-hidden","true"); }
+document.getElementById("openCampMgr").onclick=showCampMgr; closeCampMgrBtn.onclick=hideCampMgr;
 function renderCampMgr(){
   cmBody.innerHTML="";
   camps.forEach((c,i)=>{
     const row=document.createElement("div"); row.className="cm-row"; row.dataset.id=c.id;
+    row.style.gridTemplateColumns="42px 1fr 140px 120px 160px 160px 200px";
     row.innerHTML=`<div>${i+1}</div>
       <div><input class="cm-input" data-f="name" value="${c.name}"></div>
-      <div class="inline"><span class="swatch" style="display:inline-block;width:18px;height:18px;border-radius:4px;margin-right:8px;background:${c.color}"></span><input class="cm-input" data-f="color" type="color" value="${c.color}" style="width:100px;padding:4px 6px"></div>
-      <div class="inline"><span class="swatch" style="display:inline-block;width:18px;height:18px;border-radius:4px;margin-right:8px;background:${c.totalTint||'#222'}"></span><input class="cm-input" data-f="tint" type="color" value="${c.totalTint||'#222'}" style="width:100px;padding:4px 6px"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="sw" style="width:18px;height:18px;border-radius:4px;background:${c.color}"></span><input class="cm-input" data-f="color" type="color" value="${c.color}" style="width:100px;padding:4px 6px"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="sw" style="width:18px;height:18px;border-radius:4px;background:${c.totalTint||'#222'}"></span><input class="cm-input" data-f="tint" type="color" value="${c.totalTint||'#222'}" style="width:100px;padding:4px 6px"></div>
       <div><select class="cm-input" data-f="stance">
             <option value="neutral" ${c.stance==='neutral'?'selected':''}>Neutral</option>
-            <option value="ally" ${c.stance==='ally'?'selected':''}>Ally</option>
             <option value="enemy" ${c.stance==='enemy'?'selected':''}>Enemy</option>
+            <option value="ally" ${c.stance==='ally'?'selected':''}>Ally</option>
           </select></div>
       <div class="cm-actions">
         <button class="cm-icon" data-act="autoTint">Auto Tint</button>
@@ -583,28 +961,28 @@ function renderCampMgr(){
       <div class="small">ID: ${c.id}</div>`;
     cmBody.appendChild(row);
   });
-  document.querySelectorAll('input[data-f="color"]').forEach(inp=>{
+  cmBody.querySelectorAll('input[data-f="color"]').forEach(inp=>{
     inp.oninput=()=>{
       const row=inp.closest('.cm-row');
-      row.querySelectorAll('.swatch')[0].style.background=inp.value;
+      row.querySelectorAll('.sw')[0].style.background=inp.value;
       const tint=mix(inp.value,"#000",0.75);
       const t=row.querySelector('input[data-f="tint"]'); t.value=tint;
-      row.querySelectorAll('.swatch')[1].style.background=tint;
+      row.querySelectorAll('.sw')[1].style.background=tint;
     };
   });
-  document.querySelectorAll('input[data-f="tint"]').forEach(inp=> inp.oninput=()=> inp.previousElementSibling.style.background=inp.value );
-  document.querySelectorAll('button[data-act]').forEach(btn=>{
+  cmBody.querySelectorAll('input[data-f="tint"]').forEach(inp=> inp.oninput=()=> inp.previousElementSibling.style.background=inp.value );
+  cmBody.querySelectorAll('select[data-f="stance"]').forEach(sel=> sel.onchange=()=>{const id=sel.closest('.cm-row').dataset.id;const c=camps.find(x=>x.id===id);if(c){c.stance=sel.value;triggerRedrawAndSave();}});
+  cmBody.querySelectorAll('button[data-act]').forEach(btn=>{
     btn.onclick=()=>{
       const row=btn.closest('.cm-row'); const id=row.dataset.id; const c=camps.find(x=>x.id===id); if(!c)return;
       const act=btn.dataset.act;
-      if(act==="autoTint"){const col=row.querySelector('input[data-f="color"]').value;const tint=mix(col,"#000",0.75);row.querySelector('input[data-f="tint"]').value=tint;row.querySelectorAll('.swatch')[1].style.background=tint;}
-      if(act==="dup"){const copy={...c,id:uid(),name:(row.querySelector('input[data-f="name"]').value||c.name)+" (Copy)",rows:c.rows.map(r=>[...r])};camps.splice(camps.indexOf(c)+1,0,copy);pos[copy.id]=[...(pos[c.id]||[0.5,0.5])];renderCampMgr();draw();}
-      if(act==="del"){if(!confirm(`Delete camp "${c.name}"?`))return;camps=camps.filter(x=>x.id!==id);delete pos[id];renderCampMgr();draw();}
+      if(act==="autoTint"){const col=row.querySelector('input[data-f="color"]').value;const tint=mix(col,"#000",0.75);row.querySelector('input[data-f="tint"]').value=tint;row.querySelectorAll('.sw')[1].style.background=tint;}
+      if(act==="dup"){const copy={...c,id:uid(),name:(row.querySelector('input[data-f="name"]').value||c.name)+" (Copy)",rows:c.rows.map(r=>[...r])};camps.splice(camps.indexOf(c)+1,0,copy);pos[copy.id]=[...(pos[c.id]||[0.5,0.5])];renderCampMgr();triggerRedrawAndSave();}
+      if(act==="del"){if(!confirm(`Delete camp "${c.name}"?`))return;camps=camps.filter(x=>x.id!==id);delete pos[id];renderCampMgr();triggerRedrawAndSave();}
     };
   });
-  document.querySelectorAll('select[data-f="stance"]').forEach(sel=> sel.onchange=()=>{const id=sel.closest('.cm-row').dataset.id;const c=camps.find(x=>x.id===id);if(c){c.stance=sel.value;draw();}});
 }
-if(saveCampMgrBtn){ saveCampMgrBtn.onclick=()=>{
+function saveCampMgr(){
   [...document.querySelectorAll(".cm-row")].forEach(row=>{
     const id=row.dataset.id,c=camps.find(x=>x.id===id); if(!c)return;
     c.name=row.querySelector('input[data-f="name"]').value.trim()||"Camp";
@@ -612,44 +990,48 @@ if(saveCampMgrBtn){ saveCampMgrBtn.onclick=()=>{
     c.totalTint=row.querySelector('input[data-f="tint"]').value;
     c.stance=row.querySelector('select[data-f="stance"]').value;
   });
-  hideCampMgr(); draw();
-}; }
-if(addCampBtn){ addCampBtn.onclick=()=>{
+  triggerRedrawAndSave();
+}
+saveCampMgrBtn.onclick=()=>{ saveCampMgr(); alert("Camps saved."); };
+addCampBtn.onclick=()=>{
   const id=uid();
   const c={id,name:`Camp ${camps.length+1}`,color:"#999999",totalTint:mix("#999","#000",0.75),stance:"neutral",rows:[["","",""]]};
-  camps.push(c); pos[c.id]=[0.5,0.5]; renderCampMgr(); draw();
-}; }
+  camps.push(c); pos[c.id]=[0.5,0.5]; renderCampMgr(); triggerRedrawAndSave();
+};
 
-/* ====== Edit Data ====== */
-function isEditorOpen(){return editorWrap && getComputedStyle(editorWrap).display!=="none"}
+/* ===== Edit Data ===== */
+document.getElementById("openData").onclick=openEditor;
+cancelDataBtn.onclick=closeEditor;
+let currentEditorCampIndex=0;
+function openEditor(){ refreshEditorUI(camps[0]?.name); editorWrap.style.display="flex"; editorWrap.setAttribute("aria-hidden","false") }
+function closeEditor(){
+  const idx=currentEditorCampIndex;
+  if (camps[idx]){ camps[idx].rows = collectRowsFromEditor(); }
+  editorWrap.style.display="none"; editorWrap.setAttribute("aria-hidden","true");
+  triggerRedrawAndSave();
+}
 function refreshEditorUI(preserveName){
   campSelect.innerHTML=camps.map((c,i)=>`<option value="${i}">${c.name}</option>`).join("");
   let idx=0; if(preserveName){const i=camps.findIndex(c=>(c.name||"")===preserveName); if(i>=0) idx=i;}
   currentEditorCampIndex=idx; campSelect.value=String(idx); renderRows();
 }
-function openEditor(){refreshEditorUI(camps[currentEditorCampIndex]?.name); editorWrap.style.display="flex"; editorWrap.setAttribute("aria-hidden","false")}
-document.addEventListener("click",(ev)=>{
-  if(ev.target.id==="openData"){ev.preventDefault(); openEditor()}
-  if(ev.target.id==="cancelData"){ev.preventDefault(); editorWrap.style.display="none"; editorWrap.setAttribute("aria-hidden","true")}
-});
 function rowTemplate(i,kd,pw,kp){return`
-  <div class="et-row">
-    <div><input class="et-input" data-i="${i}" data-f="kd"  value="${kd||""}" placeholder="e.g. 2359"></div>
-    <div><input class="et-input" data-i="${i}" data-f="pow" value="${pw||""}" placeholder="e.g. 23,8B"></div>
-    <div><input class="et-input" data-i="${i}" data-f="kp"  value="${kp||""}"  placeholder="e.g. 1.234,5B"></div>
-    <div class="cm-actions"><button class="cm-icon" data-move="${i}" data-dir="-1">⬆️</button><button class="cm-icon" data-move="${i}" data-dir="1">⬇️</button></div>
+  <div class="et-row" style="grid-template-columns:140px 160px 160px 110px 110px">
+    <div><input class="et-input" data-i="${i}" data-f="kd"  value="${kd||""}" placeholder="2359"></div>
+    <div><input class="et-input" data-i="${i}" data-f="pow" value="${pw||""}" placeholder="23,8B"></div>
+    <div><input class="et-input" data-i="${i}" data-f="kp"  value="${kp||""}"  placeholder="1.234,5B"></div>
+    <div class="cm-actions"><button class="cm-icon" data-move="${i}" data-dir="-1">⬆️</button><button class="cm-icon" data-dir="1" data-move="${i}">⬇️</button></div>
     <div class="cm-actions"><button class="cm-icon" data-del="${i}">🗑️</button></div>
   </div>`}
 function renderRows(){
   const idx=parseInt(campSelect.value||"0",10), r=camps[idx]?.rows||[];
   rowsBody.innerHTML=r.map((row,i)=>rowTemplate(i,row[0],row[1],row[2])).join("");
-  rowsBody.querySelectorAll("button[data-del]").forEach(b=>b.onclick=()=>{const i=parseInt(b.dataset.del,10);camps[idx].rows.splice(i,1);renderRows()});
-  rowsBody.querySelectorAll("button[data-move]").forEach(b=>b.onclick=()=>{const i=parseInt(b.dataset.move,10),d=parseInt(b.dataset.dir,10);const j=i+d;if(j<0||j>=camps[idx].rows.length)return;const t=camps[idx].rows[i];camps[idx].rows[i]=camps[idx].rows[j];camps[idx].rows[j]=t;renderRows()});
+  rowsBody.querySelectorAll("button[data-del]").forEach(b=>b.onclick=()=>{const i=parseInt(b.dataset.del,10);camps[idx].rows.splice(i,1);renderRows(); triggerRedrawAndSave();});
+  rowsBody.querySelectorAll("button[data-move]").forEach(b=>b.onclick=()=>{const i=parseInt(b.dataset.move,10),d=parseInt(b.dataset.dir,10);const j=i+d;if(j<0||j>=camps[idx].rows.length)return;const t=camps[idx].rows[i];camps[idx].rows[i]=camps[idx].rows[j];camps[idx].rows[j]=t;renderRows(); triggerRedrawAndSave();});
   rowsBody.querySelectorAll("input.et-input").forEach(inp=>{
     const f=inp.dataset.f;
-    const val=()=>{if(f==="kd")inp.classList.toggle("invalid",!validKD(inp.value));else{inp.value=normalizePowerStr(inp.value);inp.classList.toggle("invalid",!validBM(inp.value))}};
+    const val=()=>{if(f==="kd")inp.classList.toggle("invalid",!validKD(inp.value));else{inp.value=normalizePowerStr(inp.value);inp.classList.toggle("invalid",!validBM(inp.value))}; triggerRedrawAndSave();};
     inp.addEventListener("input",val); val();
-    inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addRowBtn.click()}})
   });
 }
 function collectRowsFromEditor(){
@@ -661,137 +1043,26 @@ function collectRowsFromEditor(){
     if(kd||pow||kp)rows.push([kd,pow,kp]);
   }); return rows;
 }
-campSelect.onchange=()=>{const old=currentEditorCampIndex;const rows=collectRowsFromEditor();if(camps[old])camps[old].rows=rows;currentEditorCampIndex=parseInt(campSelect.value||"0",10);renderRows();draw()}
-if(addRowBtn){ addRowBtn.onclick=()=>{const idx=currentEditorCampIndex;const rows=collectRowsFromEditor();if(camps[idx])camps[idx].rows=rows;camps[idx].rows.push(["","",""]);renderRows()} }
-if(resetCampBtn){ resetCampBtn.onclick=()=>{if(!confirm("Really clear this camp's data?"))return;const idx=currentEditorCampIndex;camps[idx].rows=[["","",""]];renderRows()} }
-if(applyDataBtn){ applyDataBtn.onclick=()=>{const idx=currentEditorCampIndex;camps[idx].rows=collectRowsFromEditor();editorWrap.style.display="none";editorWrap.setAttribute("aria-hidden","true");draw()} }
-if(saveDataBtn){ saveDataBtn.onclick = () => { try { localStorage.setItem(DATA_KEY, JSON.stringify(serializeState())); alert("Data saved ✔"); } catch (e) { console.error(e); alert("Save failed."); } }; }
-if(loadDataBtn){ loadDataBtn.onclick = () => {
-  const raw = localStorage.getItem(DATA_KEY);
-  if (!raw) return alert("No saved data.");
-  try {
-    const state = JSON.parse(raw);
-    const incomingKey   = state.mapKey   || "";
-    const incomingLabel = state.mapLabel || incomingKey || "Unknown";
-    const curKey = presetSel?.value || "";
-    const curLabel = getPresetTitleByKey(curKey);
-    if (incomingKey && incomingKey !== curKey) {
-      alert(`Error: Saved data belongs to map "${incomingLabel}", but current is "${curLabel}". Please select the correct map preset first.`);
-      return;
-    }
-    const prev = camps[currentEditorCampIndex]?.name;
-    applyState(state);
-    if (state.title) titleInput.value = state.title;
-    draw();
-    if (isEditorOpen()) refreshEditorUI(prev);
-    alert("Data loaded ✔");
-  } catch (e) { console.error(e); alert("Error while loading."); }
-}; }
-if(exportDataBtn){ exportDataBtn.onclick = async () => {
-  try {
-    const state = serializeState();
-    const txt = JSON.stringify(state, null, 2);
-    try { await navigator.clipboard.writeText(txt); alert("JSON copied ✔"); }
-    catch {
-      const blob = new Blob([txt], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a"); a.href=url; a.download="siege_overlay_state.json";
-      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    }
-  } catch (e) { console.error(e); alert("Export failed."); }
-}; }
-if(importDataBtn){ importDataBtn.onclick = () => {
-  const txt = prompt("Paste JSON here:"); if (!txt) return;
-  try {
-    const state = JSON.parse(txt);
-    const incomingKey   = state.mapKey   || "";
-    const incomingLabel = state.mapLabel || incomingKey || "Unknown";
-    const curKey = presetSel?.value || "";
-    const curLabel = getPresetTitleByKey(curKey);
-    if (incomingKey && incomingKey !== curKey) {
-      alert(`Error: Imported data belongs to map "${incomingLabel}", but current is "${curLabel}". Please select the correct map preset first.`);
-      return;
-    }
-    const prev = camps[currentEditorCampIndex]?.name;
-    applyState(state);
-    if (state.title) titleInput.value = state.title;
-    draw();
-    if (isEditorOpen()) refreshEditorUI(prev);
-    alert("Data imported ✔");
-  } catch (e) { console.error(e); alert("Could not parse JSON."); }
-}; }
-function sanitizeCamps(arr){
-  return (arr||[]).map(c=>{
-    const id=c.id||uid();
-    return { id, name:c.name||"Camp", color:c.color||"#999999",
-      totalTint:c.totalTint||mix(c.color||"#999","#000",0.75),
-      stance:c.stance||"neutral",
-      rows:Array.isArray(c.rows)?c.rows.map(r=>[r[0]||"",r[1]||"",r[2]||""]):[["","",""]] };
-  });
-}
-function serializeState(){
-  const outPos={};
-  camps.forEach(c=>{const p=pos[c.id]; if(Array.isArray(p)&&p.length===2) outPos[c.id]=[clamp(p[0],0,1),clamp(p[1],0,1)]});
-  return { mapKey:(presetSel?.value||"custom"), mapLabel:getPresetTitleByKey(presetSel?.value||"Custom"), title:titleInput.value||"", camps:sanitizeCamps(camps), pos:outPos };
-}
-function applyState(state){
-  let importedCamps, importedPos={};
-  if(Array.isArray(state)){importedCamps=state}
-  else if(state && Array.isArray(state.camps)){importedCamps=state.camps; if(state.pos&&typeof state.pos==="object") importedPos=state.pos}
-  else{throw new Error("Invalid data format")}
-  const cleaned=sanitizeCamps(importedCamps);
-  const newPos={}, currentNameToPos={};
-  camps.forEach(c=>{if(pos[c.id]) currentNameToPos[c.name.toLowerCase()]=pos[c.id]});
-  cleaned.forEach(c=>{
-    if(importedPos[c.id]){newPos[c.id]=importedPos[c.id]; return;}
-    const byName=cleaned.find(x=>(x.name||"").toLowerCase()===(c.name||"").toLowerCase());
-    if(byName && byName.id && importedPos[byName.id]){newPos[c.id]=importedPos[byName.id]; return;}
-    if(currentNameToPos[c.name.toLowerCase()]){newPos[c.id]=currentNameToPos[c.name.toLowerCase()]; return;}
-    newPos[c.id]=[0.5,0.5];
-  });
-  camps=cleaned; pos=newPos;
-}
+campSelect.onchange=()=>{const old=currentEditorCampIndex;const rows=collectRowsFromEditor();if(camps[old])camps[old].rows=rows;currentEditorCampIndex=parseInt(campSelect.value||"0",10);renderRows(); triggerRedrawAndSave();}
+addRowBtn.onclick=()=>{const idx=currentEditorCampIndex;const rows=collectRowsFromEditor();if(camps[idx])camps[idx].rows=rows;camps[idx].rows.push(["","",""]);renderRows(); triggerRedrawAndSave();}
+resetCampBtn.onclick=()=>{if(!confirm("Clear this camp's data?"))return;const idx=currentEditorCampIndex;camps[idx].rows=[["","",""]];renderRows(); triggerRedrawAndSave();}
+applyDataBtn.onclick=()=>{const idx=currentEditorCampIndex;camps[idx].rows=collectRowsFromEditor();closeEditor();}
 
-/* ====== Build Custom Map ====== */
-function buildCustomMap(count){
-  if (presetSel) presetSel.value = "custom";
-  titleInput.value = "Custom Map";
-  const palette4 = [
-    { name:"Camp A", color:"#EF4444", pos:[0.25,0.18] },
-    { name:"Camp B", color:"#8B5E3C", pos:[0.75,0.18] },
-    { name:"Camp C", color:"#3B82F6", pos:[0.25,0.78] },
-    { name:"Camp D", color:"#8B5CF6", pos:[0.75,0.78] },
-  ];
-  const palette6 = [
-    { name:"Camp A", color:"#EF4444", pos:[0.18,0.16] },
-    { name:"Camp B", color:"#8B5E3C", pos:[0.50,0.12] },
-    { name:"Camp C", color:"#8B5CF6", pos:[0.83,0.16] },
-    { name:"Camp D", color:"#F59E0B", pos:[0.18,0.78] },
-    { name:"Camp E", color:"#22C55E", pos:[0.50,0.82] },
-    { name:"Camp F", color:"#3B82F6", pos:[0.83,0.78] },
-  ];
-  const src = (count >= 6) ? palette6 : palette4;
-
-  camps = src.map(d => ({
-     id: uid(), name: d.name, color: d.color,
-     totalTint: mix(d.color, "#000", 0.75), stance: "neutral",
-     rows: [["", "", ""]],
-  }));
-  pos = {}; camps.forEach((c,i)=> pos[c.id] = src[i].pos);
-  summaryGroupPos = [0.50,0.50];
-  draw();
-  try { renderCampMgr(); campMgrWrap.style.display="flex"; campMgrWrap.setAttribute("aria-hidden","false"); }
-  catch(e){ console.error(e); }
-}
-
-/* ====== Drawing helpers ====== */
+/* ===== Drawing ===== */
 const roundRect=(x,y,w,h,r)=>{ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()};
-function computePanelSizeForRows(baseW,baseH,rowsCount){const pad=8,MIN=24;const N=rowsCount+1;const minH=2*pad+N*MIN;return{W:baseW,H:Math.max(baseH,minH),N,pad}}
+function computePanelSizeForRows(baseW,baseH,rowsCount){
+  const pad=8, N=rowsCount+1, MIN_ROW_H=24;
+  const minH=2*pad+N*MIN_ROW_H, MIN_COL_KD=90, MIN_COL_POW=120, MIN_COL_KP=120;
+  const minW=2*pad+(MIN_COL_KD+MIN_COL_POW+MIN_COL_KP);
+  const kH=(baseH<minH)?(minH/baseH):1, kW=(baseW<minW)?(minW/baseW):1;
+  let k=Math.max(kH,kW); const CAP=1.25; if(k>CAP)k=CAP; if(k<1)k=1;
+  return { W: baseW*k, H: baseH*k, N, pad };
+}
 function getStanceStroke(c){
   const neutral=(document.body.dataset.theme==="dark")?"#B0BEC5":"#455A64";
-  if(c.stance==="ally")  return {color:"#43A047", width:7, glow:12, pattern:[]};
-  if(c.stance==="enemy") return {color:"#E53935", width:7, glow:12, pattern:[]};
-  return {color:neutral,   width:7, glow:12, pattern:[]};
+  if(c.stance==="ally")  return {color:"#43A047", width:7, glow:12};
+  if(c.stance==="enemy") return {color:"#E53935", width:7, glow:12};
+  return {color:neutral,   width:7, glow:12};
 }
 function drawTable(x,y,w,h,c){
   const rows=withTotals(c.rows), nBody=rows.length, nCols=3, pad=8, N=nBody+1;
@@ -799,71 +1070,85 @@ function drawTable(x,y,w,h,c){
   const S=clamp(Math.min(cellH/24,(cellW/160)),0.65,1.6);
   const SIZE={name:clamp(Math.round(18*S),12,26),header:clamp(Math.round(14*S),11,22),body:clamp(Math.round(13*S),10,20),total:clamp(Math.round(13*S),10,20)};
   const bannerH=clamp(Math.round(28*S),20,40), bannerW=clamp(w*(0.66+0.02*Math.max(0,rows.length-3)),w*0.58,w*0.86);
-
   const mode=document.body.dataset.theme;
-  let a=clamp(parseFloat(alphaInput.value||"0.70"),0.10,0.95); if(mode==="dark") a=Math.max(a,0.58);
 
-  // panel fill
-  const panelFill=(mode==="dark")?`rgba(0,0,0,${a})`:`rgba(255,255,255,${a})`;
+  const baseA  = clamp(parseFloat(alphaInput.value || "0.70"), 0.10, 0.95);
+  const aPanel = baseA;
+  const aHeader= clamp(baseA + (mode==="light"?0.06:0.08), 0.12, 0.98);
+  const aBody  = clamp(baseA - 0.04, 0.08, 0.95);
+
+  if (mode === "light") {
+    const under = clamp((1 - aPanel) * 0.18, 0, 0.18);
+    if (under > 0.001) { ctx.fillStyle = `rgba(0,0,0,${under})`; roundRect(x, y, w, h, 10); ctx.fill(); }
+  }
+  const panelFill=(mode==="dark")?`rgba(0,0,0,${aPanel})`:`rgba(255,255,255,${aPanel})`;
   ctx.fillStyle=panelFill; roundRect(x,y,w,h,10); ctx.fill();
 
-  // frame (stance)
   const ss=getStanceStroke(c);
-  ctx.lineJoin="round"; ctx.lineCap="round"; ctx.miterLimit=2.5; ctx.setLineDash([]);
-  ctx.lineWidth=Math.max(4, ss.width+5);
-  ctx.strokeStyle=hexWithAlpha(ss.color,(mode==="light")?0.20:0.28);
+  ctx.lineJoin="round"; ctx.lineCap="round"; ctx.miterLimit=2.5;
+  const glowAlpha = (mode==="light") ? 0.18 * aPanel : 0.28;
+  ctx.lineWidth=Math.max(4, ss.width+5); ctx.strokeStyle=hexWithAlpha(ss.color, glowAlpha);
   roundRect(Math.round(x)+0.5,Math.round(y)+0.5,Math.round(w)-1,Math.round(h)-1,10); ctx.stroke();
-
   ctx.lineWidth=ss.width; ctx.strokeStyle=ss.color;
   roundRect(Math.round(x)+0.5,Math.round(y)+0.5,Math.round(w)-1,Math.round(h)-1,10); ctx.stroke();
-
-  // inner crisp
-  ctx.lineWidth=2.25; ctx.strokeStyle="rgba(0,0,0,0.55)";
+  const innerAlpha = (mode==="light") ? (0.55 * aPanel + 0.10) : 0.55;
+  ctx.lineWidth=(mode==="light")?2.6:2.25; ctx.strokeStyle=`rgba(0,0,0,${innerAlpha})`;
   roundRect(Math.round(x)+1,Math.round(y)+1,Math.round(w)-2,Math.round(h)-2,9); ctx.stroke();
-  ctx.lineWidth=0.9; ctx.strokeStyle="rgba(0,0,0,0.35)";
+  const hairAlpha = (mode==="light") ? (0.40 * aPanel + 0.10) : 0.35;
+  ctx.lineWidth=1.0; ctx.strokeStyle=`rgba(0,0,0,${hairAlpha})`;
   roundRect(Math.round(x)+0.5,Math.round(y)+0.5,Math.round(w)-1,Math.round(h)-1,10); ctx.stroke();
 
-  // banner
   const bW=bannerW, bH=bannerH, bX=x+(w-bW)/2, bY=y-bH-6;
-  const bAlpha=clamp(Math.max(0.75,a+0.25),0.75,0.96);
-  ctx.fillStyle=hexWithAlpha(c.color,bAlpha); roundRect(bX,bY,bW,bH,10); ctx.fill();
-  ctx.strokeStyle="rgba(0,0,0,0.65)"; ctx.lineWidth=1; ctx.stroke();
-
-  // banner text
-  setFont(SIZE.name,"600");
+  ctx.fillStyle=hexWithAlpha(c.color,aHeader); roundRect(bX,bY,bW,bH,10); ctx.fill();
+  ctx.strokeStyle="rgba(0,0,0,.75)"; ctx.lineWidth=1; ctx.stroke();
+  ctx.font=`600 ${SIZE.name}px Inter, Segoe UI, Arial, sans-serif`;
   if(mode==="dark"){ctx.save();ctx.shadowColor="rgba(0,0,0,0.55)";ctx.shadowBlur=4;ctx.shadowOffsetY=1}
   ctx.strokeStyle="rgba(0,0,0,.75)"; ctx.lineWidth=3; ctx.textAlign="center"; ctx.textBaseline="middle";
   ctx.strokeText(c.name,bX+bW/2,bY+bH/2+0.5);
   ctx.fillStyle="#fff"; ctx.fillText(c.name,bX+bW/2,bY+bH/2+0.5);
   if(mode==="dark") ctx.restore();
 
-  // header
   const headers=(c.headers&&c.headers.length===3)?c.headers:["KD","Power","KP"];
-  const headerAlpha=mode==="dark"?clamp(a+0.20,0.62,0.96):clamp(a+0.10,0.52,0.94);
-  ctx.fillStyle=hexWithAlpha(c.color,headerAlpha);
-  ctx.fillRect(x+pad,y+pad,cellW*nCols,cellH);
-  headers.forEach((t,ci)=>drawTextFit(t,x+pad+ci*cellW+cellW/2,y+pad+cellH/2+0.5,cellW-8,SIZE.header,"bold","#fff"));
+  ctx.fillStyle=hexWithAlpha(c.color,aHeader);
+  const cellWFull=cellW*nCols, headerY=y+pad, headerH=cellH;
+  ctx.fillRect(x+pad,headerY,cellWFull,headerH);
+  headers.forEach((t,ci)=>drawTextFit(t,x+pad+ci*cellW+cellW/2,headerY+headerH/2+0.5,cellW-8,SIZE.header,"bold","#fff"));
 
-  // body + total
-  const bodyFill=(mode==="dark")?`rgba(30,30,30,${a})`:`rgba(250,250,250,${a})`;
-  const totalFill=hexWithAlpha(getTotalTint(c),Math.max(0.45,a));
-  for(let r=0;r<nBody;r++){
-    const yy=y+pad+(r+1)*cellH, isTotal=rows[r][0]==="Total";
-    ctx.fillStyle=isTotal?totalFill:bodyFill; ctx.fillRect(x+pad,yy,cellW*nCols,cellH);
-    for(let cc=0;cc<nCols;cc++){
-      const col=(mode==="dark")?"#EAEAEA":"#222", sz=isTotal?SIZE.total:SIZE.body;
-      drawTextFit(rows[r][cc],x+pad+cc*cellW+cellW/2,yy+cellH/2+0.5,cellW-8,sz,isTotal?"bold":"",col);
+  const bodyFill = (mode === "dark") ? `rgba(30,30,30,${aBody})` : `rgba(255,255,255,${aBody})`;
+  const totalBase = c.totalTint || mix(c.color,"#000",0.75);
+  const totalFill = (mode === "light")
+    ? hexWithAlpha(mix(totalBase, "#000", 0.25), clamp(aBody + 0.06, 0.30, 0.98))
+    : hexWithAlpha(mix(totalBase, "#fff", 0.40), clamp(aBody + 0.02, 0.30, 0.98));
+  const normalTxt = (mode === "dark") ? "#EAEAEA" : "#0e1116";
+  const totalTxt  = idealTextOnBg(totalBase);
+
+  for (let r = 0; r < rows.length; r++) {
+    const yy = y + pad + (r + 1) * cellH;
+    const isTotal = rows[r][0] === "Total";
+    ctx.fillStyle = isTotal ? totalFill : bodyFill;
+    ctx.fillRect(x + pad, yy, cellW * nCols, cellH);
+    if (isTotal) {
+      ctx.save(); ctx.strokeStyle = (mode === "light") ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.20)"; ctx.lineWidth = 1;
+      ctx.strokeRect(x + pad + 0.5, yy + 0.5, cellW * nCols - 1, cellH - 1); ctx.restore();
+    }
+    for (let cc = 0; cc < nCols; cc++) {
+      const sz = isTotal ? SIZE.total : SIZE.body;
+      const cx = x + pad + cc * cellW + cellW / 2;
+      const cy = yy + cellH / 2 + 0.5;
+      if (isTotal) {
+        if (mode === "light"){ctx.save(); ctx.lineWidth=3; ctx.strokeStyle="rgba(0,0,0,0.45)"; drawTextFit(rows[r][cc],cx,cy,cellW-8,sz,"bold",ctx.strokeStyle); ctx.restore();}
+        drawTextFit(rows[r][cc], cx, cy, cellW - 8, sz, "bold", totalTxt);
+      } else {
+        drawTextFit(rows[r][cc], cx, cy, cellW - 8, sz, "", normalTxt);
+      }
     }
   }
-
-  // grid
-  const gridAlpha=mode==="dark"?clamp(a*0.70,0.18,0.40):clamp(a*0.60,0.12,0.30);
+  const gridAlpha = (mode==="light") ? clamp(0.18 * aPanel + 0.06, 0.06, 0.22) : 0.22;
   ctx.strokeStyle=(mode==="dark")?`rgba(255,255,255,${gridAlpha})`:`rgba(0,0,0,${gridAlpha})`;
-  ctx.lineWidth=0.75;
+  ctx.lineWidth=(mode==="light")?1.0:0.75;
   for(let r=0;r<=N;r++){const yy=y+pad+r*cellH; ctx.beginPath(); ctx.moveTo(x+pad,yy); ctx.lineTo(x+pad+nCols*cellW,yy); ctx.stroke()}
   for(let ccc=0;ccc<=nCols;ccc++){const xx=x+pad+ccc*cellW; ctx.beginPath(); ctx.moveTo(xx,y+pad); ctx.lineTo(xx,y+pad+N*cellH); ctx.stroke()}
 }
-
 function campSum(c){let p=0,k=0;(c.rows||[]).forEach(r=>{const pv=parseToBillions(r[1]);if(!isNaN(pv))p+=pv;const kv=parseToBillions(r[2]);if(!isNaN(kv))k+=kv});return{p,k}}
 const buildSummaryRows=list=> list.map(c=>{const s=campSum(c);return[c.name,fmtB(s.p),fmtB(s.k)]});
 function drawSummaryGroup(area,baseW,baseH){
@@ -871,19 +1156,19 @@ function drawSummaryGroup(area,baseW,baseH){
   const allies=camps.filter(c=>c.stance==="ally"), enemies=camps.filter(c=>c.stance==="enemy");
   const ally={id:"ally",name:"Allies",color:"#4CAF50",totalTint:(document.body.dataset.theme==="dark")?"rgba(255,255,255,.06)":"rgba(0,0,0,.05)",stance:"ally",headers:["Camp","Power","KP"],rows:buildSummaryRows(allies)};
   const enemy={id:"enemy",name:"Enemies",color:"#E53935",totalTint:(document.body.dataset.theme==="dark")?"rgba(255,255,255,.06)":"rgba(0,0,0,.05)",stance:"enemy",headers:["Camp","Power","KP"],rows:buildSummaryRows(enemies)};
-  const needA=computePanelSizeForRows(baseW,baseH,ally.rows.length+1), needE=computePanelSizeForRows(baseW,baseH,enemy.rows.length+1);
-  const H=Math.max(needA.H,needE.H), W=baseW, gap=18;
+  const needA=computePanelSizeForRows(baseW,baseH,ally.rows.length+1);
+  const needE=computePanelSizeForRows(baseW,baseH,enemy.rows.length+1);
+  const W=Math.max(needA.W,needE.W), H=Math.max(needA.H,needE.H), gap=18;
   let [fx,fy]=summaryGroupPos; let cx=area.x+fx*area.w, cy=area.y+fy*area.h;
   const totalW=W*2+gap, totalH=H;
   cx=clamp(cx, area.x+totalW/2, area.x+area.w-totalW/2);
   cy=clamp(cy, area.y+totalH/2, area.y+area.h-totalH/2);
   const leftX=Math.round(cx-totalW/2), topY=Math.round(cy-totalH/2);
-  drawTable(leftX,topY,W,H,ally);
-  drawTable(leftX+W+gap,topY,W,H,enemy);
+  drawTable(leftX,topY,W,H,ally); drawTable(leftX+W+gap,topY,W,H,enemy);
   lastSummaryGroupLayout={x:leftX,y:topY,w:totalW,h:totalH};
 }
 
-/* ====== Dragging (mit Offset, kein Springen) ====== */
+/* ===== Dragging ===== */
 function canvasPoint(evt){
   const rect=cv.getBoundingClientRect();
   return { x:(evt.clientX-rect.left)*(cv.width/rect.width), y:(evt.clientY-rect.top)*(cv.height/rect.height) };
@@ -899,106 +1184,71 @@ function hitTestCamp(mx,my){
 }
 function insideSummary(mx,my){
   const s=lastSummaryGroupLayout;
-  if(!s) return false;
-  return (mx>=s.x && mx<=s.x+s.w && my>=s.y && my<=s.y+s.h);
+  return !!(s && mx>=s.x && mx<=s.x+s.w && my>=s.y && my<=s.y+s.h);
 }
 function getSummaryCenter(){
   if(!lastSummaryGroupLayout) return null;
-  return {
-    cx: lastSummaryGroupLayout.x + lastSummaryGroupLayout.w/2,
-    cy: lastSummaryGroupLayout.y + lastSummaryGroupLayout.h/2,
-    halfW: lastSummaryGroupLayout.w/2,
-    halfH: lastSummaryGroupLayout.h/2
-  };
+  return { cx:lastSummaryGroupLayout.x+lastSummaryGroupLayout.w/2, cy:lastSummaryGroupLayout.y+lastSummaryGroupLayout.h/2, halfW:lastSummaryGroupLayout.w/2, halfH:lastSummaryGroupLayout.h/2 };
 }
-
-let dragState=null; // {type:'camp'|'summary', id?, offX, offY}
-
+let dragState=null;
 cv.addEventListener('mousedown', (e)=>{
   if(!dragOn || !lastLayout) return;
   const {x:mx,y:my}=canvasPoint(e);
-
-  // Summary zuerst
-  if(showSummary && insideSummary(mx,my)){
+  if(insideSummary(mx,my)){
     const sc = getSummaryCenter();
-    if(sc){
-      dragState={type:'summary', offX: mx - sc.cx, offY: my - sc.cy};
-      cv.style.cursor='grabbing';
-      e.preventDefault();
-      return;
-    }
+    if(sc){ dragState={type:'summary', offX: mx - sc.cx, offY: my - sc.cy}; cv.style.cursor='grabbing'; e.preventDefault(); return; }
   }
-  // Camp?
   const hit=hitTestCamp(mx,my);
   if(hit){
-    const centerX=hit.rect.L + hit.rect.W/2;
-    const centerY=hit.rect.T + hit.rect.H/2;
+    const centerX=hit.rect.L + hit.rect.W/2, centerY=hit.rect.T + hit.rect.H/2;
     dragState={type:'camp', id:hit.id, offX: mx-centerX, offY: my-centerY};
-    cv.style.cursor='grabbing';
-    e.preventDefault();
+    cv.style.cursor='grabbing'; e.preventDefault();
   }
 });
-
 window.addEventListener('mousemove', (e)=>{
   if(!dragOn || !lastLayout || !dragState) return;
-  const {x:mx,y:my}=canvasPoint(e);
-  const area=lastLayout;
-
+  const {x:mx,y:my}=canvasPoint(e), area=lastLayout;
   if(dragState.type==='summary'){
-    let targetCx = mx - dragState.offX;
-    let targetCy = my - dragState.offY;
-    const sc = getSummaryCenter();
-    const halfW = sc?.halfW ?? 0, halfH = sc?.halfH ?? 0;
-    targetCx = clamp(targetCx, area.x + halfW, area.x + area.w - halfW);
-    targetCy = clamp(targetCy, area.y + halfH, area.y + area.h - halfH);
-    const fx= (targetCx - area.x) / area.w;
-    const fy= (targetCy - area.y) / area.h;
-    summaryGroupPos=[clamp(fx,0,1), clamp(fy,0,1)];
-    draw(); e.preventDefault(); return;
+    let targetCx = mx - dragState.offX, targetCy = my - dragState.offY;
+    const sc = getSummaryCenter(); const halfW=sc?.halfW??0, halfH=sc?.halfH??0;
+    targetCx=clamp(targetCx, area.x+halfW, area.x+area.w-halfW);
+    targetCy=clamp(targetCy, area.y+halfH, area.y+area.h-halfH);
+    summaryGroupPos=[ clamp((targetCx-area.x)/area.w,0,1), clamp((targetCy-area.y)/area.h,0,1) ];
+    triggerRedrawAndSave(); e.preventDefault(); return;
   }
   if(dragState.type==='camp'){
     const id=dragState.id;
-    const cx=mx - dragState.offX;
-    const cy=my - dragState.offY;
-    const fx=clamp((cx-area.x)/area.w, 0, 1);
-    const fy=clamp((cy-area.y)/area.h, 0, 1);
-    pos[id]=[fx,fy];
-    draw(); e.preventDefault(); return;
+    const cx=mx - dragState.offX, cy=my - dragState.offY;
+    pos[id]=[ clamp((cx-area.x)/area.w,0,1), clamp((cy-area.y)/area.h,0,1) ];
+    triggerRedrawAndSave(); e.preventDefault(); return;
   }
 });
+["mouseup","mouseleave"].forEach(ev=> window.addEventListener(ev, ()=>{ if(dragState){ dragState=null; cv.style.cursor=dragOn?'grab':'default'; }}));
 
-window.addEventListener('mouseup', ()=>{
-  if(dragState){ dragState=null; cv.style.cursor=dragOn?'grab':'default'; }
-});
-cv.addEventListener('mouseleave', ()=>{
-  if(dragState){ dragState=null; cv.style.cursor=dragOn?'grab':'default'; }
-});
-
-/* ====== Main draw ====== */
+/* ===== Drawing main ===== */
+function loadMapForPreset(key){const src=presetImages[key]; if(!src) return; const img=new Image(); img.onload=()=>{mapImg=img;draw(); autoSave();}; img.src=src}
 function draw(){
   const mode=document.body.dataset.theme;
   ctx.clearRect(0,0,cv.width,cv.height);
   ctx.fillStyle=(mode==="dark")?"#0e1116":"#ffffff"; ctx.fillRect(0,0,cv.width,cv.height);
-
-  setFont(38,"bold"); ctx.textAlign="center"; ctx.textBaseline="top";
+  ctx.font=`bold 38px Inter, Segoe UI, Arial, sans-serif`; ctx.textAlign="center"; ctx.textBaseline="top";
   ctx.fillStyle=(mode==="dark")?"var(--gold-dark)":"var(--gold-light)";
   ctx.fillText(titleInput.value||"Map", cv.width/2, 18);
 
   const mapTop=80, mapMarginX=40, boxW=cv.width-mapMarginX*2, boxH=cv.height-mapTop-40;
-
   if(mapImg){
     const fitR=Math.min(boxW/mapImg.width, boxH/mapImg.height);
     const r=fitR*parseFloat(mapScaleInput.value||"1.00");
     const w=Math.round(mapImg.width*r), h=Math.round(mapImg.height*r);
     const x=Math.round((cv.width-w)/2), y=Math.round(mapTop+(boxH-h)/2);
-
     ctx.drawImage(mapImg,x,y,w,h);
     lastLayout={x,y,w,h};
 
-    const s=parseFloat(panelSizeInput.value||"0.60");
+    /* 25% kleiner: multiplikativ 0.75 auf den Slider-Wert */
+    const s = 0.75 * parseFloat(panelSizeInput.value || "0.75");
     const baseW=w*PWIDTH0*s, baseH=h*PHEIGHT0*s;
-    lastCampRects={};
 
+    lastCampRects={};
     for(const c of camps){
       if(!pos[c.id]) pos[c.id]=[0.5,0.5];
       const need=computePanelSizeForRows(baseW,baseH,withTotals(c.rows).length);
@@ -1008,26 +1258,76 @@ function draw(){
       drawTable(L,T,need.W,need.H,c);
       lastCampRects[c.id]={L,T,W:need.W,H:need.H};
     }
-
     drawSummaryGroup({x,y,w,h},baseW,baseH);
   }else{
-    setFont(16,"");
+    ctx.font=`16px Inter, Segoe UI, Arial, sans-serif`;
     ctx.fillStyle=(mode==="dark")?"#bbb":"#555";
     ctx.fillText("Pick a preset (auto loads map) or upload your own image.", cv.width/2, mapTop+20);
     lastLayout=null; lastCampRects={}; lastSummaryGroupLayout=null;
   }
 }
 
-/* ====== Init ====== */
+/* ===== Build Custom ===== */
+function buildCustomMap(count){
+  presetSel.value = "custom";
+  titleInput.value = "Custom Map";
+  const palette4 = [
+    { name:"Camp A", color:"#EF4444", pos:[0.25,0.18] },
+    { name:"Camp B", color:"#8B5E3C", pos:[0.75,0.18] },
+    { name:"Camp C", color:"#3B82F6", pos:[0.25,0.78] },
+    { name:"Camp D", color:"#8B5CF6", pos:[0.75,0.78] },
+  ];
+  const palette6 = [
+    { name:"Camp A", color:"#EF4444", pos:[0.18,0.16] },
+    { name:"Camp B", color:"#8B5E3C", pos:[0.50,0.12] },
+    { name:"Camp C", color:"#8B5CF6", pos:[0.83,0.16] },
+    { name:"Camp D", color:"#F59E0B", pos:[0.18,0.78] },
+    { name:"Camp E", color:"#22C55E", pos:[0.50,0.82] },
+    { name:"Camp F", color:"#3B82F6", pos:[0.83,0.78] },
+  ];
+  const src=(count>=6)?palette6:palette4;
+  camps = src.map(d=>({ id:uid(), name:d.name, color:d.color, totalTint:mix(d.color,"#000",0.75), stance:"neutral", rows:[["","",""]] }));
+  pos={}; camps.forEach((c,i)=> pos[c.id]=src[i].pos);
+  summaryGroupPos=[0.50,0.50];
+  triggerRedrawAndSave();
+}
+
+/* ===== Modal outside-click + ESC schließen ===== */
+chooseMapWrap.addEventListener("click",(e)=>{ if(e.target===chooseMapWrap){ closeChooseMapBtn.click(); }});
+uploadWrap.addEventListener("click",(e)=>{ if(e.target===uploadWrap){ closeUploadModal(); }});
+campMgrWrap.addEventListener("click",(e)=>{ if(e.target===campMgrWrap){ hideCampMgr(); }});
+editorWrap.addEventListener("click",(e)=>{ if(e.target===editorWrap){ closeEditor(); }});
+window.addEventListener("keydown",(e)=>{
+  if(e.key!=="Escape") return;
+  if (closeIfOpen(uploadWrap,  closeUploadModal)) return;
+  if (closeIfOpen(chooseMapWrap, ()=>closeChooseMapBtn.click())) return;
+  if (closeIfOpen(editorWrap,  closeEditor)) return;
+  if (closeIfOpen(campMgrWrap, hideCampMgr)) return;
+});
+
+/* ===== Init ===== */
 (function init(){
-  document.getElementById("cpYear").textContent = new Date().getFullYear();
-  presetSel.value="heroic4";
-  titleInput.value=getPresetTitleByKey("heroic4");
-  applyPreset("heroic4", false);
-  loadMapForPreset("heroic4");
+  document.getElementById("crYear").textContent = new Date().getFullYear(); // copyright year
+
+  const loaded = applyStateFromUrl();
+  if (!loaded){
+    const saved = localStorage.getItem(AUTOSAVE_KEY);
+    if (saved){
+      try{
+        const obj = JSON.parse(saved);
+        const ok = confirm("Found an auto-saved map. Restore it?");
+        if (ok){ doImport(obj); }
+        else { presetSel.value="heroic4"; titleInput.value=getPresetTitleByKeyShort("heroic4"); applyPreset("heroic4", false); loadMapForPreset("heroic4"); }
+      }catch{
+        presetSel.value="heroic4"; titleInput.value=getPresetTitleByKeyShort("heroic4"); applyPreset("heroic4", false); loadMapForPreset("heroic4");
+      }
+    }else{
+      presetSel.value="heroic4"; titleInput.value=getPresetTitleByKeyShort("heroic4"); applyPreset("heroic4", false); loadMapForPreset("heroic4");
+    }
+  }
   draw();
+  window.addEventListener("hashchange", ()=>{ applyStateFromUrl() && draw(); });
 })();
 </script>
 </body>
 </html>
-
